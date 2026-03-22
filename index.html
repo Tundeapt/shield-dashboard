@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shield V1 | Brockway Risk Terminal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0a0a0f;
+    --panel:    #0f0f1a;
+    --border:   #1a1a2e;
+    --accent:   #00d4aa;
+    --accent2:  #0088ff;
+    --warn:     #ffaa00;
+    --danger:   #ff3355;
+    --success:  #00d4aa;
+    --text:     #c8d0e0;
+    --muted:    #4a5568;
+    --bright:   #e8f0ff;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,212,170,0.015) 2px,
+      rgba(0,212,170,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .logo span {
+    color: var(--muted);
+    font-weight: 300;
+    font-size: 11px;
+    margin-left: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .clock {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .status-pill {
+    padding: 4px 12px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .status-active { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .status-halted { background: rgba(255,51,85,0.15); color: var(--danger); border: 1px solid rgba(255,51,85,0.3); }
+  .status-closed { background: rgba(255,170,0,0.15); color: var(--warn); border: 1px solid rgba(255,170,0,0.3); }
+
+  /* MAIN GRID */
+  .main {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* PANELS */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(26,26,46,0.5);
+  }
+
+  .panel-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .panel-badge {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  /* ACCOUNT PANEL */
+  .account-panel { grid-column: 1; grid-row: 1 / 3; }
+
+  .account-body { padding: 20px 16px; }
+
+  .account-id {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .account-num {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--bright);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+  }
+
+  .profile-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(26,26,46,0.8);
+  }
+
+  .metric-row:last-child { border-bottom: none; }
+
+  .metric-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .metric-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bright);
+  }
+
+  .metric-value.green { color: var(--accent); }
+  .metric-value.red { color: var(--danger); }
+  .metric-value.yellow { color: var(--warn); }
+
+  /* RATCHET PANEL */
+  .ratchet-panel { grid-column: 2; grid-row: 1; }
+
+  .ratchet-body {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .ratchet-tier {
+    background: rgba(10,10,15,0.6);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .ratchet-tier.active {
+    border-color: var(--accent);
+    background: rgba(0,212,170,0.05);
+  }
+
+  .ratchet-tier.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .tier-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .tier-hwm {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--bright);
+    margin-bottom: 4px;
+  }
+
+  .tier-floor {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .tier-floor span { color: var(--accent2); }
+
+  .tier-status {
+    margin-top: 8px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .tier-status.locked { color: var(--accent); }
+
+  /* PROTECTION LAYERS */
+  .layers-panel { grid-column: 2; grid-row: 2; }
+
+  .layers-grid {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .layer-card {
+    background: rgba(10,10,15,0.6);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px;
+    position: relative;
+  }
+
+  .layer-name {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .layer-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bright);
+    margin-bottom: 4px;
+  }
+
+  .layer-sub {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .layer-indicator {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .layer-indicator.warn {
+    background: var(--warn);
+    box-shadow: 0 0 8px var(--warn);
+  }
+
+  .layer-indicator.danger {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+    animation: pulse-fast 0.8s ease-in-out infinite;
+  }
+
+  .layer-indicator.off {
+    background: var(--muted);
+    box-shadow: none;
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes pulse-fast {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.1; }
+  }
+
+  /* EQUITY CHART */
+  .chart-panel { grid-column: 1 / 3; }
+
+  .chart-body {
+    padding: 16px;
+    height: 140px;
+    position: relative;
+  }
+
+  svg.chart { width: 100%; height: 100%; }
+
+  .chart-labels {
+    position: absolute;
+    bottom: 20px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* LOG PANEL */
+  .log-panel { grid-column: 1 / 3; }
+
+  .log-body {
+    padding: 12px 16px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  .log-entry {
+    display: flex;
+    gap: 16px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(26,26,46,0.5);
+    font-size: 11px;
+    align-items: flex-start;
+  }
+
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-time { color: var(--muted); min-width: 60px; }
+  .log-type { min-width: 100px; font-weight: 600; letter-spacing: 0.06em; }
+  .log-type.info { color: var(--accent2); }
+  .log-type.success { color: var(--accent); }
+  .log-type.warn { color: var(--warn); }
+  .log-type.trigger { color: var(--danger); }
+  .log-msg { color: var(--text); flex: 1; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-brand { color: var(--accent); font-weight: 500; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* DEMO INPUT BANNER */
+  .demo-banner {
+    background: rgba(0,136,255,0.08);
+    border: 1px solid rgba(0,136,255,0.2);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--accent2);
+  }
+
+  .demo-banner strong { font-weight: 600; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .account-panel { grid-column: 1; grid-row: auto; }
+    .ratchet-panel { grid-column: 1; }
+    .layers-panel { grid-column: 1; }
+    .chart-panel { grid-column: 1; }
+    .log-panel { grid-column: 1; }
+    .ratchet-body { grid-template-columns: repeat(2,1fr); }
+    .layers-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">SHIELD V1 <span>BROCKWAY RISK TERMINAL</span></div>
+  </div>
+  <div class="header-right">
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="status-pill status-active" id="statusPill">ACTIVE</div>
+  </div>
+</div>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <strong>DEMO MODE</strong> — Connect your Shield EA to push live account data. This dashboard updates in real-time when the EA is running.
+</div>
+
+<!-- MAIN GRID -->
+<div class="main">
+
+  <!-- ACCOUNT PANEL -->
+  <div class="panel account-panel">
+    <div class="panel-header">
+      <div class="panel-title">Account Telemetry</div>
+      <div class="panel-badge" id="lastUpdate">Live</div>
+    </div>
+    <div class="account-body">
+      <div class="account-id">MT5 ACCOUNT</div>
+      <div class="account-num" id="accountNum">112213585</div>
+      <div class="profile-tag" id="profileTag">PROJECT V</div>
+
+      <div class="metric-row">
+        <div class="metric-label">Equity</div>
+        <div class="metric-value" id="equity">€481.63</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">SOD Balance</div>
+        <div class="metric-value" id="sod">€381.63</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">P&L Today</div>
+        <div class="metric-value green" id="pnl">+26.2%</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">HWM</div>
+        <div class="metric-value green" id="hwm">+26.2%</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Floor</div>
+        <div class="metric-value" id="floor">INACTIVE</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Trail</div>
+        <div class="metric-value yellow" id="trail">WAITING HWM+80%</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Session Close</div>
+        <div class="metric-value" id="sessionClose">22:30</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Last Trigger</div>
+        <div class="metric-value" id="lastTrigger">None</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATCHET TIERS -->
+  <div class="panel ratchet-panel">
+    <div class="panel-header">
+      <div class="panel-title">Ratchet Architecture — Project V ×100</div>
+      <div class="panel-badge">4 TIERS</div>
+    </div>
+    <div class="ratchet-body">
+      <div class="ratchet-tier">
+        <div class="tier-label">Tier 0 — Activate</div>
+        <div class="tier-hwm">+20%</div>
+        <div class="tier-floor">Floor → <span>−80%</span></div>
+        <div class="tier-status">Waiting</div>
+      </div>
+      <div class="ratchet-tier">
+        <div class="tier-label">Tier 1</div>
+        <div class="tier-hwm">+40%</div>
+        <div class="tier-floor">Floor → <span>−60%</span></div>
+        <div class="tier-status">Waiting</div>
+      </div>
+      <div class="ratchet-tier">
+        <div class="tier-label">Tier 2</div>
+        <div class="tier-hwm">+60%</div>
+        <div class="tier-floor">Floor → <span>0%</span></div>
+        <div class="tier-status">Waiting</div>
+      </div>
+      <div class="ratchet-tier">
+        <div class="tier-label">Tier 3 — Trail</div>
+        <div class="tier-hwm">+80%</div>
+        <div class="tier-floor">Trail → <span>HWM−40%</span></div>
+        <div class="tier-status">Waiting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTECTION LAYERS -->
+  <div class="panel layers-panel">
+    <div class="panel-header">
+      <div class="panel-title">Protection Layers — 7 Active</div>
+      <div class="panel-badge">ALL SYSTEMS NOMINAL</div>
+    </div>
+    <div class="layers-grid">
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">Portfolio Heat</div>
+        <div class="layer-value" id="heat">0.0%</div>
+        <div class="layer-sub">Cap: 250% | Clear</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">Velocity Monitor</div>
+        <div class="layer-value" id="velocity">SAFE</div>
+        <div class="layer-sub">Threshold: 12% in 5min</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">News Sentinel</div>
+        <div class="layer-value" id="news">MONITORING</div>
+        <div class="layer-sub">Next: No events</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">Currency Spine</div>
+        <div class="layer-value">ACTIVE</div>
+        <div class="layer-sub">EUR4 GBP4 USD3 JPY2 CHF2</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">Session Close</div>
+        <div class="layer-value">22:30</div>
+        <div class="layer-sub" id="sessionCountdown">Opens in 06:00</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-indicator"></div>
+        <div class="layer-name">SOD Floor</div>
+        <div class="layer-value">−100%</div>
+        <div class="layer-sub">Broker margin call</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="panel log-panel">
+    <div class="panel-header">
+      <div class="panel-title">System Log</div>
+      <div class="panel-badge" id="logCount">6 ENTRIES</div>
+    </div>
+    <div class="log-body" id="logBody">
+      <div class="log-entry">
+        <div class="log-time">22:30:01</div>
+        <div class="log-type success">SESSION_CLOSED</div>
+        <div class="log-msg">All positions closed. P&L: +42.8%. HWM: +42.8%. See you tomorrow.</div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">22:30:01</div>
+        <div class="log-type info">TG_SENT</div>
+        <div class="log-msg">Telegram alert fired: SESSION CLOSED 22:30 | P&L +42.8%</div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">19:14:33</div>
+        <div class="log-type info">NEWS_CLEAR</div>
+        <div class="log-msg">News window cleared. Next high-impact event: None today.</div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">13:03:12</div>
+        <div class="log-type success">EA_ARMED</div>
+        <div class="log-msg">Model: PROJECTV | Account: 112213585 | All protection layers active.</div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">13:03:08</div>
+        <div class="log-type info">LICENSE_OK</div>
+        <div class="log-msg">Account 112213585 verified. Infrastructure activating...</div>
+      </div>
+      <div class="log-entry">
+        <div class="log-time">13:03:05</div>
+        <div class="log-type info">RESET</div>
+        <div class="log-msg">New session. SOD=€381.63. All ratchet tiers reset. Four Teachers scanning.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>SHIELD V1 &nbsp;|&nbsp; BROCKWAY TRADING & TECHNICAL ANALYSIS LIMITED &nbsp;|&nbsp; $99/MONTH</div>
+  <div class="footer-brand">brockwayltd.com</div>
+  <div>BRING YOUR EDGE. SHIELD GOVERNS THE RISK.</div>
+</div>
+
+<script>
+  // CLOCK
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = h+':'+m+':'+s;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // DEMO: Simulate live equity updates
+  let baseEquity = 481.63;
+  let sod = 381.63;
+
+  function updateDemo() {
+    const drift = (Math.random() - 0.48) * 3;
+    baseEquity = Math.max(sod * 0.2, baseEquity + drift);
+    const pnlPct = ((baseEquity - sod) / sod * 100).toFixed(2);
+    const hwmPct = Math.max(parseFloat(document.getElementById('hwm').textContent), parseFloat(pnlPct)).toFixed(2);
+
+    document.getElementById('equity').textContent = '€' + baseEquity.toFixed(2);
+    const pnlEl = document.getElementById('pnl');
+    pnlEl.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct + '%';
+    pnlEl.className = 'metric-value ' + (pnlPct >= 0 ? 'green' : 'red');
+    document.getElementById('hwm').textContent = '+' + hwmPct + '%';
+
+    const heat = (Math.random() * 15).toFixed(1);
+    document.getElementById('heat').textContent = heat + '%';
+
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = 
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0') + ':' +
+      String(now.getSeconds()).padStart(2,'0');
+  }
+
+  setInterval(updateDemo, 3000);
+
+  // SESSION COUNTDOWN
+  function updateSessionCountdown() {
+    const now = new Date();
+    const open = new Date(now);
+    open.setHours(6, 0, 0, 0);
+    if (now >= open) open.setDate(open.getDate() + 1);
+    const diff = open - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    document.getElementById('sessionCountdown').textContent =
+      'Opens in ' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+  }
+  setInterval(updateSessionCountdown, 60000);
+  updateSessionCountdown();
+</script>
+</body>
+</html>
