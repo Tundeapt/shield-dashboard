@@ -1,12 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
 export default async function handler(req, res) {
   try {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+      return res.status(500).json({
+        error: "Missing Supabase environment variables"
+      });
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_KEY
+    );
+
     const { data, error } = await supabase
       .from('shield_state')
       .select('*')
@@ -14,11 +20,9 @@ export default async function handler(req, res) {
       .limit(1);
 
     if (error) {
-      console.error("STATE ERROR:", error);
       return res.status(500).json({ error: error.message });
     }
 
-    // 🔥 SAFE RETURN (no crash)
     if (!data || data.length === 0) {
       return res.status(200).json({});
     }
@@ -26,7 +30,8 @@ export default async function handler(req, res) {
     return res.status(200).json(data[0]);
 
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({
+      error: err.message
+    });
   }
 }
