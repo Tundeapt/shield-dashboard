@@ -430,27 +430,47 @@ async function fetchState() {
 
     console.log("LIVE DATA:", data);
 
-    // Update UI (adjust IDs to match your HTML)
-    if (data.balance !== undefined)
-      document.getElementById('balance').innerText = data.balance;
+    // =========================
+    // PROJECT V
+    // =========================
+    if (data.equity !== undefined) {
+      document.getElementById('pv-eq').innerText = "€" + data.equity.toFixed(2);
+    }
 
-    if (data.equity !== undefined)
-      document.getElementById('equity').innerText = data.equity;
+    if (data.pv_float_pct !== undefined) {
+      document.getElementById('pv-pnl').innerText = data.pv_float_pct.toFixed(2) + "%";
+    }
 
-    if (data.axm_float_pct !== undefined)
-      document.getElementById('axm').innerText = data.axm_float_pct + "%";
+    if (data.pv_float_pct !== undefined) {
+      document.getElementById('pv-hwm').innerText = data.pv_float_pct.toFixed(2) + "%";
+    }
 
-    if (data.pv_float_pct !== undefined)
-      document.getElementById('pv').innerText = data.pv_float_pct + "%";
+    if (data.pv_positions !== undefined) {
+      document.getElementById('pv-heat').innerText = data.pv_positions;
+    }
 
-    if (data.axm_positions !== undefined)
-      document.getElementById('axm_pos').innerText = data.axm_positions;
+    if (data.last_trigger !== undefined) {
+      const triggerEls = document.querySelectorAll('[id="trigger"], .metric-v');
+    }
 
-    if (data.pv_positions !== undefined)
-      document.getElementById('pv_pos').innerText = data.pv_positions;
+    // =========================
+    // TOTAL PORTFOLIO
+    // =========================
+    if (data.equity !== undefined) {
+      document.getElementById('totalEquity').innerText = "€" + data.equity.toFixed(2);
+    }
 
-    if (data.last_trigger !== undefined)
-      document.getElementById('trigger').innerText = data.last_trigger;
+    if (data.pv_float_pct !== undefined) {
+      document.getElementById('totalPnl').innerText = data.pv_float_pct.toFixed(2) + "% today";
+    }
+
+    // =========================
+    // SESSION
+    // =========================
+    if (data.sess_fired !== undefined) {
+      document.getElementById('pv-sess').innerText =
+        data.sess_fired ? "SESSION CLOSED" : "ACTIVE";
+    }
 
   } catch (err) {
     console.error("Fetch error:", err);
