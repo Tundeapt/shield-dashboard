@@ -419,6 +419,47 @@ function startDemo() {
     document.getElementById('dl-upd').textContent = ts;
   }, 3000);
 }
-</script>
+</script> 
 </body>
 </html>
+<script>
+async function fetchState() {
+  try {
+    const res = await fetch('/api/state');
+    const data = await res.json();
+
+    console.log("LIVE DATA:", data);
+
+    // Update UI (adjust IDs to match your HTML)
+    if (data.balance !== undefined)
+      document.getElementById('balance').innerText = data.balance;
+
+    if (data.equity !== undefined)
+      document.getElementById('equity').innerText = data.equity;
+
+    if (data.axm_float_pct !== undefined)
+      document.getElementById('axm').innerText = data.axm_float_pct + "%";
+
+    if (data.pv_float_pct !== undefined)
+      document.getElementById('pv').innerText = data.pv_float_pct + "%";
+
+    if (data.axm_positions !== undefined)
+      document.getElementById('axm_pos').innerText = data.axm_positions;
+
+    if (data.pv_positions !== undefined)
+      document.getElementById('pv_pos').innerText = data.pv_positions;
+
+    if (data.last_trigger !== undefined)
+      document.getElementById('trigger').innerText = data.last_trigger;
+
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
+// Run every 5 seconds
+setInterval(fetchState, 5000);
+
+// Run immediately
+fetchState();
+</script>
