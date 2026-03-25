@@ -1,102 +1,777 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SHIELD — Brockway Command</title><link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"><style>  :root {    --gold: #C9A84C;    --gold-dim: #8a6e2f;    --green: #00E5A0;    --red: #FF4060;    --bg: #080A0E;    --surface: #0D1117;    --surface2: #131920;    --border: rgba(201,168,76,0.15);    --text: #E8E2D4;    --muted: #5a5a6a;    --font-mono: 'Space Mono', monospace;    --font-display: 'Syne', sans-serif;  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {    background: var(--bg);    color: var(--text);    font-family: var(--font-mono);    min-height: 100vh;    overflow-x: hidden;  }
-  /* Grid noise overlay */  body::before {    content: '';    position: fixed;    inset: 0;    background-image:      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);    background-size: 40px 40px;    pointer-events: none;    z-index: 0;  }
-  .wrap {    position: relative;    z-index: 1;    max-width: 1200px;    margin: 0 auto;    padding: 24px 20px;  }
-  /* HEADER */  header {    display: flex;    align-items: center;    justify-content: space-between;    margin-bottom: 32px;    padding-bottom: 20px;    border-bottom: 1px solid var(--border);  }
-  .logo {    display: flex;    align-items: center;    gap: 14px;  }
-  .logo-mark {    width: 40px;    height: 40px;    border: 2px solid var(--gold);    display: grid;    place-items: center;    position: relative;  }
-  .logo-mark::before {    content: '';    position: absolute;    inset: 4px;    border: 1px solid var(--gold-dim);    opacity: 0.5;  }
-  .logo-mark span {    font-family: var(--font-display);    font-weight: 800;    font-size: 18px;    color: var(--gold);    letter-spacing: -1px;  }
-  .logo-text h1 {    font-family: var(--font-display);    font-weight: 800;    font-size: 18px;    color: var(--gold);    letter-spacing: 4px;    text-transform: uppercase;  }
-  .logo-text p {    font-size: 10px;    color: var(--muted);    letter-spacing: 2px;    text-transform: uppercase;    margin-top: 2px;  }
-  .header-right {    display: flex;    align-items: center;    gap: 20px;  }
-  .pulse-dot {    width: 8px;    height: 8px;    border-radius: 50%;    background: var(--green);    box-shadow: 0 0 12px var(--green);    animation: pulse 2s infinite;  }
-  .pulse-dot.offline { background: var(--red); box-shadow: 0 0 12px var(--red); animation: none; }
-  @keyframes pulse {    0%, 100% { opacity: 1; transform: scale(1); }    50% { opacity: 0.5; transform: scale(0.85); }  }
-  #status-text {    font-size: 11px;    color: var(--muted);    letter-spacing: 1px;    text-transform: uppercase;  }
-  #last-update {    font-size: 10px;    color: var(--muted);    letter-spacing: 0.5px;  }
-  /* ACCOUNT BANNER */  .account-banner {    background: var(--surface);    border: 1px solid var(--border);    padding: 20px 28px;    display: grid;    grid-template-columns: repeat(4, 1fr);    gap: 0;    margin-bottom: 24px;    position: relative;    overflow: hidden;  }
-  .account-banner::before {    content: '';    position: absolute;    top: 0; left: 0; right: 0;    height: 1px;    background: linear-gradient(90deg, transparent, var(--gold), transparent);  }
-  .banner-stat {    padding: 0 24px;    border-right: 1px solid var(--border);  }
-  .banner-stat:first-child { padding-left: 0; }  .banner-stat:last-child { border-right: none; }
-  .banner-stat label {    display: block;    font-size: 10px;    color: var(--muted);    letter-spacing: 2px;    text-transform: uppercase;    margin-bottom: 6px;  }
-  .banner-stat .value {    font-family: var(--font-display);    font-size: 24px;    font-weight: 700;    color: var(--text);    letter-spacing: -0.5px;  }
-  .banner-stat .value.pos { color: var(--green); }  .banner-stat .value.neg { color: var(--red); }
-  .banner-stat .sub {    font-size: 11px;    color: var(--muted);    margin-top: 4px;  }
-  /* ENGINES GRID */  .engines {    display: grid;    grid-template-columns: 1fr 1fr;    gap: 16px;    margin-bottom: 24px;  }
-  .engine-card {    background: var(--surface);    border: 1px solid var(--border);    padding: 24px;    position: relative;    overflow: hidden;  }
-  .engine-card::after {    content: '';    position: absolute;    top: 0; left: 0; bottom: 0;    width: 2px;  }
-  .engine-card.axiom::after { background: var(--gold); }  .engine-card.pv::after { background: #7B5CF0; }
-  .engine-header {    display: flex;    align-items: center;    justify-content: space-between;    margin-bottom: 20px;  }
-  .engine-name {    font-family: var(--font-display);    font-weight: 800;    font-size: 13px;    letter-spacing: 3px;    text-transform: uppercase;  }
-  .engine-card.axiom .engine-name { color: var(--gold); }  .engine-card.pv .engine-name { color: #7B5CF0; }
-  .engine-badge {    font-size: 10px;    padding: 3px 10px;    border-radius: 2px;    letter-spacing: 1px;    text-transform: uppercase;  }
-  .badge-active { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.3); }  .badge-wiped { background: rgba(255,64,96,0.12); color: var(--red); border: 1px solid rgba(255,64,96,0.3); }  .badge-stopped{ background: rgba(255,64,96,0.12); color: var(--red); border: 1px solid rgba(255,64,96,0.3); }
-  .engine-stats {    display: grid;    grid-template-columns: 1fr 1fr;    gap: 16px;  }
-  .stat-box {    padding: 14px;    background: var(--surface2);    border: 1px solid rgba(255,255,255,0.04);  }
-  .stat-box label {    display: block;    font-size: 9px;    color: var(--muted);    letter-spacing: 2px;    text-transform: uppercase;    margin-bottom: 6px;  }
-  .stat-box .val {    font-family: var(--font-display);    font-size: 20px;    font-weight: 700;    color: var(--text);  }
-  .stat-box .val.pos { color: var(--green); }  .stat-box .val.neg { color: var(--red); }
-  /* BAR */  .engine-bar {    margin-top: 16px;  }
-  .bar-label {    display: flex;    justify-content: space-between;    font-size: 10px;    color: var(--muted);    margin-bottom: 6px;  }
-  .bar-track {    height: 3px;    background: rgba(255,255,255,0.06);    border-radius: 2px;    overflow: hidden;  }
-  .bar-fill {    height: 100%;    border-radius: 2px;    transition: width 0.6s ease;  }
-  .axiom .bar-fill { background: var(--gold); }  .pv .bar-fill { background: #7B5CF0; }  .bar-fill.danger { background: var(--red); }
-  /* STATUS ROW */  .status-row {    display: grid;    grid-template-columns: repeat(4, 1fr);    gap: 12px;    margin-bottom: 24px;  }
-  .status-tile {    background: var(--surface);    border: 1px solid var(--border);    padding: 16px 18px;    display: flex;    align-items: center;    gap: 12px;  }
-  .status-icon {    font-size: 18px;    line-height: 1;  }
-  .status-tile .st-label {    font-size: 9px;    color: var(--muted);    letter-spacing: 2px;    text-transform: uppercase;    display: block;    margin-bottom: 4px;  }
-  .status-tile .st-val {    font-family: var(--font-display);    font-size: 13px;    font-weight: 700;    letter-spacing: 1px;  }
-  .st-val.ok { color: var(--green); }  .st-val.warn { color: var(--gold); }  .st-val.danger { color: var(--red); }
-  /* FOOTER */  footer {    margin-top: 32px;    padding-top: 20px;    border-top: 1px solid var(--border);    display: flex;    justify-content: space-between;    align-items: center;  }
-  footer p {    font-size: 10px;    color: var(--muted);    letter-spacing: 1px;    text-transform: uppercase;  }
-  /* LOADING */  .loading {    display: flex;    flex-direction: column;    align-items: center;    justify-content: center;    min-height: 60vh;    gap: 16px;  }
-  .loading-ring {    width: 48px;    height: 48px;    border: 2px solid var(--border);    border-top-color: var(--gold);    border-radius: 50%;    animation: spin 0.8s linear infinite;  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading p {    font-size: 11px;    color: var(--muted);    letter-spacing: 3px;    text-transform: uppercase;  }
-  /* ERROR */  .error-banner {    background: rgba(255,64,96,0.08);    border: 1px solid rgba(255,64,96,0.3);    padding: 16px 20px;    margin-bottom: 20px;    font-size: 12px;    color: var(--red);    letter-spacing: 0.5px;    display: none;  }
-  /* RESPONSIVE */  @media (max-width: 768px) {    .account-banner { grid-template-columns: 1fr 1fr; }    .banner-stat:nth-child(2) { border-right: none; }    .banner-stat:nth-child(3) { border-right: 1px solid var(--border); }    .engines { grid-template-columns: 1fr; }    .status-row { grid-template-columns: 1fr 1fr; }  }
-  @media (max-width: 480px) {    .account-banner { grid-template-columns: 1fr; }    .banner-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }    .banner-stat:last-child { border-bottom: none; }    .status-row { grid-template-columns: 1fr; }    .header-right { gap: 12px; }  }</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHIELD — Brockway Command</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-dim: #8a6e2f;
+    --green: #00E5A0;
+    --red: #FF4060;
+    --bg: #080A0E;
+    --surface: #0D1117;
+    --surface2: #131920;
+    --border: rgba(201,168,76,0.15);
+    --text: #E8E2D4;
+    --muted: #5a5a6a;
+    --font-mono: 'Space Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--gold);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--gold-dim);
+    opacity: 0.5;
+  }
+
+  .logo-mark span {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: -1px;
+  }
+
+  .logo-text h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .logo-text p {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot.offline { background: var(--red); box-shadow: 0 0 12px var(--red); animation: none; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  #status-text {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  #last-update {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* ACCOUNT BANNER */
+  .account-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .account-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .banner-stat {
+    padding: 0 24px;
+    border-right: 1px solid var(--border);
+  }
+
+  .banner-stat:first-child { padding-left: 0; }
+  .banner-stat:last-child { border-right: none; }
+
+  .banner-stat label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .banner-stat .value {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .banner-stat .value.pos { color: var(--green); }
+  .banner-stat .value.neg { color: var(--red); }
+
+  .banner-stat .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ENGINES GRID */
+  .engines {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .engine-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .engine-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 2px;
+  }
+
+  .engine-card.axiom::after { background: var(--gold); }
+  .engine-card.pv::after { background: #7B5CF0; }
+
+  .engine-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .engine-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .engine-card.axiom .engine-name { color: var(--gold); }
+  .engine-card.pv .engine-name { color: #7B5CF0; }
+
+  .engine-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .badge-active { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.3); }
+  .badge-wiped  { background: rgba(255,64,96,0.12);  color: var(--red);   border: 1px solid rgba(255,64,96,0.3); }
+  .badge-stopped{ background: rgba(255,64,96,0.12);  color: var(--red);   border: 1px solid rgba(255,64,96,0.3); }
+
+  .engine-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .stat-box {
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .stat-box label {
+    display: block;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-box .val {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-box .val.pos { color: var(--green); }
+  .stat-box .val.neg { color: var(--red); }
+
+  /* BAR */
+  .engine-bar {
+    margin-top: 16px;
+  }
+
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .bar-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .axiom .bar-fill { background: var(--gold); }
+  .pv .bar-fill { background: #7B5CF0; }
+  .bar-fill.danger { background: var(--red); }
+
+  /* STATUS ROW */
+  .status-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .status-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .status-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .status-tile .st-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .status-tile .st-val {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .st-val.ok { color: var(--green); }
+  .st-val.warn { color: var(--gold); }
+  .st-val.danger { color: var(--red); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer p {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* LOADING */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 16px;
+  }
+
+  .loading-ring {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading p {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ERROR */
+  .error-banner {
+    background: rgba(255,64,96,0.08);
+    border: 1px solid rgba(255,64,96,0.3);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.5px;
+    display: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .account-banner { grid-template-columns: 1fr 1fr; }
+    .banner-stat:nth-child(2) { border-right: none; }
+    .banner-stat:nth-child(3) { border-right: 1px solid var(--border); }
+    .engines { grid-template-columns: 1fr; }
+    .status-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .account-banner { grid-template-columns: 1fr; }
+    .banner-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }
+    .banner-stat:last-child { border-bottom: none; }
+    .status-row { grid-template-columns: 1fr; }
+    .header-right { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
 <div class="wrap">
-  <header>    <div class="logo">      <div class="logo-mark"><span>S</span></div>      <div class="logo-text">        <h1>Shield</h1>        <p>Brockway Risk Terminal</p>      </div>    </div>    <div class="header-right">      <div id="pulse" class="pulse-dot offline"></div>      <span id="status-text">CONNECTING...</span>      <span id="last-update">—</span>    </div>  </header>
-  <div id="error-banner" class="error-banner"></div>
-  <div id="loading" class="loading">    <div class="loading-ring"></div>    <p>Loading live data...</p>  </div>
-  <div id="main" style="display:none">
-    <!-- ACCOUNT BANNER -->    <div class="account-banner">      <div class="banner-stat">        <label>Balance</label>        <div id="balance" class="value">—</div>        <div class="sub">Account total</div>      </div>      <div class="banner-stat">        <label>Equity</label>        <div id="equity" class="value">—</div>        <div class="sub">Live value</div>      </div>      <div class="banner-stat">        <label>Floating P&L</label>        <div id="pnl" class="value">—</div>        <div class="sub">Unrealised</div>      </div>      <div class="banner-stat">        <label>Session</label>        <div id="session" class="value" style="font-size:16px">—</div>        <div class="sub" id="trigger">—</div>      </div>    </div>
-    <!-- ENGINE CARDS -->    <div class="engines">
-      <!-- AXIOM -->      <div class="engine-card axiom">        <div class="engine-header">          <div class="engine-name">Axiom</div>          <div id="axm-badge" class="engine-badge badge-active">ACTIVE</div>        </div>        <div class="engine-stats">          <div class="stat-box">            <label>Quota (SOD)</label>            <div id="axm-sod" class="val">—</div>          </div>          <div class="stat-box">            <label>Positions</label>            <div id="axm-pos" class="val">—</div>          </div>          <div class="stat-box">            <label>Float %</label>            <div id="axm-float" class="val">—</div>          </div>          <div class="stat-box">            <label>Allocation</label>            <div class="val" style="color:var(--gold)">75%</div>          </div>        </div>        <div class="engine-bar">          <div class="bar-label">            <span>Exposure</span>            <span id="axm-exp-pct">0%</span>          </div>          <div class="bar-track">            <div id="axm-bar" class="bar-fill" style="width:0%"></div>          </div>        </div>      </div>
-      <!-- PROJECT V -->      <div class="engine-card pv">        <div class="engine-header">          <div class="engine-name">Project V</div>          <div id="pv-badge" class="engine-badge badge-active">ACTIVE</div>        </div>        <div class="engine-stats">          <div class="stat-box">            <label>Quota (SOD)</label>            <div id="pv-sod" class="val">—</div>          </div>          <div class="stat-box">            <label>Positions</label>            <div id="pv-pos" class="val">—</div>          </div>          <div class="stat-box">            <label>Float %</label>            <div id="pv-float" class="val">—</div>          </div>          <div class="stat-box">            <label>Day Loss</label>            <div id="pv-loss" class="val">—</div>          </div>        </div>        <div class="engine-bar">          <div class="bar-label">            <span>Day loss vs quota</span>            <span id="pv-loss-pct-lbl">0%</span>          </div>          <div class="bar-track">            <div id="pv-bar" class="bar-fill" style="width:0%"></div>          </div>        </div>      </div>
-    </div>
-    <!-- STATUS ROW -->    <div class="status-row">      <div class="status-tile">        <div class="status-icon"> </div>        <div>          <span class="st-label">News</span>          <div id="news" class="st-val ok">CLEAR</div>        </div>      </div>      <div class="status-tile">        <div class="status-icon"> </div>        <div>          <span class="st-label">PV Status</span>          <div id="pv-status" class="st-val ok">ACTIVE</div>        </div>      </div>      <div class="status-tile">        <div class="status-icon"> </div>        <div>          <span class="st-label">Axiom Status</span>          <div id="axm-status" class="st-val ok">ACTIVE</div>        </div>      </div>      <div class="status-tile">        <div class="status-icon"> </div>        <div>          <span class="st-label">Last Trigger</span>          <div id="last-trigger" class="st-val warn">—</div>        </div>      </div>    </div>
-  </div><!-- /main -->
-  <footer>    <p>Brockway Trading & Technical Analysis Limited</p>    <p id="timestamp">—</p>  </footer>
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark"><span>S</span></div>
+      <div class="logo-text">
+        <h1>Shield</h1>
+        <p>Brockway Risk Terminal</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="pulse" class="pulse-dot offline"></div>
+      <span id="status-text">CONNECTING...</span>
+      <span id="last-update">—</span>
+    </div>
+  </header>
+
+  <div id="error-banner" class="error-banner"></div>
+
+  <div id="loading" class="loading">
+    <div class="loading-ring"></div>
+    <p>Loading live data...</p>
+  </div>
+
+  <div id="main" style="display:none">
+
+    <!-- ACCOUNT BANNER -->
+    <div class="account-banner">
+      <div class="banner-stat">
+        <label>Balance</label>
+        <div id="balance" class="value">—</div>
+        <div class="sub">Account total</div>
+      </div>
+      <div class="banner-stat">
+        <label>Equity</label>
+        <div id="equity" class="value">—</div>
+        <div class="sub">Live value</div>
+      </div>
+      <div class="banner-stat">
+        <label>Floating P&L</label>
+        <div id="pnl" class="value">—</div>
+        <div class="sub">Unrealised</div>
+      </div>
+      <div class="banner-stat">
+        <label>Session</label>
+        <div id="session" class="value" style="font-size:16px">—</div>
+        <div class="sub" id="trigger">—</div>
+      </div>
+    </div>
+
+    <!-- ENGINE CARDS -->
+    <div class="engines">
+
+      <!-- AXIOM -->
+      <div class="engine-card axiom">
+        <div class="engine-header">
+          <div class="engine-name">Axiom</div>
+          <div id="axm-badge" class="engine-badge badge-active">ACTIVE</div>
+        </div>
+        <div class="engine-stats">
+          <div class="stat-box">
+            <label>Quota (SOD)</label>
+            <div id="axm-sod" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Positions</label>
+            <div id="axm-pos" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Float %</label>
+            <div id="axm-float" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Allocation</label>
+            <div class="val" style="color:var(--gold)">75%</div>
+          </div>
+        </div>
+        <div class="engine-bar">
+          <div class="bar-label">
+            <span>Exposure</span>
+            <span id="axm-exp-pct">0%</span>
+          </div>
+          <div class="bar-track">
+            <div id="axm-bar" class="bar-fill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT V -->
+      <div class="engine-card pv">
+        <div class="engine-header">
+          <div class="engine-name">Project V</div>
+          <div id="pv-badge" class="engine-badge badge-active">ACTIVE</div>
+        </div>
+        <div class="engine-stats">
+          <div class="stat-box">
+            <label>Quota (SOD)</label>
+            <div id="pv-sod" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Positions</label>
+            <div id="pv-pos" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Float %</label>
+            <div id="pv-float" class="val">—</div>
+          </div>
+          <div class="stat-box">
+            <label>Day Loss</label>
+            <div id="pv-loss" class="val">—</div>
+          </div>
+        </div>
+        <div class="engine-bar">
+          <div class="bar-label">
+            <span>Day loss vs quota</span>
+            <span id="pv-loss-pct-lbl">0%</span>
+          </div>
+          <div class="bar-track">
+            <div id="pv-bar" class="bar-fill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STATUS ROW -->
+    <div class="status-row">
+      <div class="status-tile">
+        <div class="status-icon">📰</div>
+        <div>
+          <span class="st-label">News</span>
+          <div id="news" class="st-val ok">CLEAR</div>
+        </div>
+      </div>
+      <div class="status-tile">
+        <div class="status-icon">🔁</div>
+        <div>
+          <span class="st-label">PV Status</span>
+          <div id="pv-status" class="st-val ok">ACTIVE</div>
+        </div>
+      </div>
+      <div class="status-tile">
+        <div class="status-icon">⚡</div>
+        <div>
+          <span class="st-label">Axiom Status</span>
+          <div id="axm-status" class="st-val ok">ACTIVE</div>
+        </div>
+      </div>
+      <div class="status-tile">
+        <div class="status-icon">🕐</div>
+        <div>
+          <span class="st-label">Last Trigger</span>
+          <div id="last-trigger" class="st-val warn">—</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <footer>
+    <p>Brockway Trading & Technical Analysis Limited</p>
+    <p id="timestamp">—</p>
+  </footer>
+
 </div>
-<script>  const API = 'shield-api-production-9eb8.up.railway.app';  let firstLoad = true;
-  function fmt(n, decimals=2) {    if(n === undefined || n === null) return '—';    return Number(n).toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});  }
-  function pct(n) {    if(n === undefined || n === null) return '—';    const v = Number(n);    return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';  }
-  function setClass(el, val, posClass='pos', negClass='neg') {    el.classList.remove('pos','neg','ok','warn','danger');    if(val > 0) el.classList.add(posClass);    else if(val < 0) el.classList.add(negClass);  }
-  function clamp(v, min, max) {    return Math.min(max, Math.max(min, v));  }
-  async function fetchData() {    try {      const res = await fetch(API);      if(!res.ok) throw new Error('HTTP ' + res.status);      const d = await res.json();      render(d);
-      document.getElementById('pulse').className = 'pulse-dot';      document.getElementById('status-text').textContent = 'LIVE';      document.getElementById('error-banner').style.display = 'none';
-    } catch(e) {      document.getElementById('pulse').className = 'pulse-dot offline';      document.getElementById('status-text').textContent = 'OFFLINE';      const eb = document.getElementById('error-banner');      eb.style.display = 'block';      eb.textContent = 'Connection error: ' + e.message;    }  }
-  function render(d) {    if(firstLoad) {      document.getElementById('loading').style.display = 'none';      document.getElementById('main').style.display = 'block';      firstLoad = false;    }
-    const now = new Date();    document.getElementById('last-update').textContent = now.toLocaleTimeString();    document.getElementById('timestamp').textContent = d.timestamp || '—';
-    // Account banner    const balance = Number(d.balance || 0);    const equity = Number(d.equity || 0);    const pnl = equity - balance;
-    document.getElementById('balance').textContent = '$' + fmt(balance);    document.getElementById('equity').textContent = '$' + fmt(equity);
-    const pnlEl = document.getElementById('pnl');    pnlEl.textContent = (pnl >= 0 ? '+$' : '-$') + fmt(Math.abs(pnl));    pnlEl.className = 'value ' + (pnl >= 0 ? 'pos' : 'neg');
-    // Session    const sessEl = document.getElementById('session');    if(d.sess_fired) {      sessEl.textContent = 'CLOSED';      sessEl.className = 'value neg';    } else {      sessEl.textContent = 'ACTIVE';      sessEl.className = 'value pos';    }    document.getElementById('trigger').textContent = d.last_trigger || 'None';
-    // Axiom    const axmSod = Number(d.axm_sod || 0);    const axmFloat = Number(d.axm_float_pct || 0);    const axmPos = Number(d.axm_positions || 0);    const axmExpPct = axmPos * 25; // 25% risk per trade
-    document.getElementById('axm-sod').textContent = '$' + fmt(axmSod);
-    const axmPosEl = document.getElementById('axm-pos');    axmPosEl.textContent = axmPos;
-    const axmFloatEl = document.getElementById('axm-float');    axmFloatEl.textContent = pct(axmFloat);    setClass(axmFloatEl, axmFloat);
-    document.getElementById('axm-exp-pct').textContent = axmExpPct + '%';    document.getElementById('axm-bar').style.width = clamp(axmExpPct, 0, 100) + '%';
-    const axmBadge = document.getElementById('axm-badge');    const axmStatusEl = document.getElementById('axm-status');    if(d.axm_stopped) {      axmBadge.textContent = 'STOPPED';      axmBadge.className = 'engine-badge badge-stopped';      axmStatusEl.textContent = 'STOPPED';      axmStatusEl.className = 'st-val danger';    } else {      axmBadge.textContent = 'ACTIVE';      axmBadge.className = 'engine-badge badge-active';      axmStatusEl.textContent = 'ACTIVE';      axmStatusEl.className = 'st-val ok';    }
-    // Project V    const pvSod = Number(d.pv_sod || 0);    const pvFloat = Number(d.pv_float_pct || 0);    const pvPos = Number(d.pv_positions || 0);    const pvLoss = Number(d.pv_day_loss_pct || 0);    const pvLossAbs = Math.abs(pvLoss);
-    document.getElementById('pv-sod').textContent = '$' + fmt(pvSod);
-    const pvPosEl = document.getElementById('pv-pos');    pvPosEl.textContent = pvPos;
-    const pvFloatEl = document.getElementById('pv-float');    pvFloatEl.textContent = pct(pvFloat);    setClass(pvFloatEl, pvFloat);
-    const pvLossEl = document.getElementById('pv-loss');    pvLossEl.textContent = pct(pvLoss);    setClass(pvLossEl, pvLoss);
-    document.getElementById('pv-loss-pct-lbl').textContent = pvLossAbs.toFixed(1) + '% of quota';    const pvBar = document.getElementById('pv-bar');    pvBar.style.width = clamp(pvLossAbs, 0, 100) + '%';    if(pvLossAbs > 75) pvBar.classList.add('danger');    else pvBar.classList.remove('danger');
-    const pvBadge = document.getElementById('pv-badge');    const pvStatusEl = document.getElementById('pv-status');    if(d.pv_wiped) {      pvBadge.textContent = 'WIPED';      pvBadge.className = 'engine-badge badge-wiped';      pvStatusEl.textContent = 'WIPED';      pvStatusEl.className = 'st-val danger';    } else {      pvBadge.textContent = 'ACTIVE';      pvBadge.className = 'engine-badge badge-active';      pvStatusEl.textContent = 'ACTIVE';      pvStatusEl.className = 'st-val ok';    }
-    // Status tiles    const newsEl = document.getElementById('news');    if(d.news_halt) {      newsEl.textContent = 'HALTED';      newsEl.className = 'st-val danger';    } else {      newsEl.textContent = 'CLEAR';      newsEl.className = 'st-val ok';    }
+
+<script>
+  const API = 'https://shield-api-production-9eb8.up.railway.app/api/state';
+  let firstLoad = true;
+
+  function fmt(n, decimals=2) {
+    if(n === undefined || n === null) return '—';
+    return Number(n).toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});
+  }
+
+  function pct(n) {
+    if(n === undefined || n === null) return '—';
+    const v = Number(n);
+    return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+  }
+
+  function setClass(el, val, posClass='pos', negClass='neg') {
+    el.classList.remove('pos','neg','ok','warn','danger');
+    if(val > 0) el.classList.add(posClass);
+    else if(val < 0) el.classList.add(negClass);
+  }
+
+  function clamp(v, min, max) {
+    return Math.min(max, Math.max(min, v));
+  }
+
+  async function fetchData() {
+    try {
+      const res = await fetch(API);
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const d = await res.json();
+      render(d);
+
+      document.getElementById('pulse').className = 'pulse-dot';
+      document.getElementById('status-text').textContent = 'LIVE';
+      document.getElementById('error-banner').style.display = 'none';
+
+    } catch(e) {
+      document.getElementById('pulse').className = 'pulse-dot offline';
+      document.getElementById('status-text').textContent = 'OFFLINE';
+      const eb = document.getElementById('error-banner');
+      eb.style.display = 'block';
+      eb.textContent = 'Connection error: ' + e.message;
+    }
+  }
+
+  function render(d) {
+    if(firstLoad) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      firstLoad = false;
+    }
+
+    const now = new Date();
+    document.getElementById('last-update').textContent = now.toLocaleTimeString();
+    document.getElementById('timestamp').textContent = d.timestamp || '—';
+
+    // Account banner
+    const balance = Number(d.balance || 0);
+    const equity  = Number(d.equity  || 0);
+    const pnl     = equity - balance;
+
+    document.getElementById('balance').textContent = '$' + fmt(balance);
+    document.getElementById('equity').textContent  = '$' + fmt(equity);
+
+    const pnlEl = document.getElementById('pnl');
+    pnlEl.textContent = (pnl >= 0 ? '+$' : '-$') + fmt(Math.abs(pnl));
+    pnlEl.className = 'value ' + (pnl >= 0 ? 'pos' : 'neg');
+
+    // Session
+    const sessEl = document.getElementById('session');
+    if(d.sess_fired) {
+      sessEl.textContent = 'CLOSED';
+      sessEl.className = 'value neg';
+    } else {
+      sessEl.textContent = 'ACTIVE';
+      sessEl.className = 'value pos';
+    }
+    document.getElementById('trigger').textContent = d.last_trigger || 'None';
+
+    // Axiom
+    const axmSod   = Number(d.axm_sod || 0);
+    const axmFloat = Number(d.axm_float_pct || 0);
+    const axmPos   = Number(d.axm_positions || 0);
+    const axmExpPct = axmPos * 25; // 25% risk per trade
+
+    document.getElementById('axm-sod').textContent = '$' + fmt(axmSod);
+
+    const axmPosEl = document.getElementById('axm-pos');
+    axmPosEl.textContent = axmPos;
+
+    const axmFloatEl = document.getElementById('axm-float');
+    axmFloatEl.textContent = pct(axmFloat);
+    setClass(axmFloatEl, axmFloat);
+
+    document.getElementById('axm-exp-pct').textContent = axmExpPct + '%';
+    document.getElementById('axm-bar').style.width = clamp(axmExpPct, 0, 100) + '%';
+
+    const axmBadge = document.getElementById('axm-badge');
+    const axmStatusEl = document.getElementById('axm-status');
+    if(d.axm_stopped) {
+      axmBadge.textContent = 'STOPPED';
+      axmBadge.className = 'engine-badge badge-stopped';
+      axmStatusEl.textContent = 'STOPPED';
+      axmStatusEl.className = 'st-val danger';
+    } else {
+      axmBadge.textContent = 'ACTIVE';
+      axmBadge.className = 'engine-badge badge-active';
+      axmStatusEl.textContent = 'ACTIVE';
+      axmStatusEl.className = 'st-val ok';
+    }
+
+    // Project V
+    const pvSod    = Number(d.pv_sod || 0);
+    const pvFloat  = Number(d.pv_float_pct || 0);
+    const pvPos    = Number(d.pv_positions || 0);
+    const pvLoss   = Number(d.pv_day_loss_pct || 0);
+    const pvLossAbs = Math.abs(pvLoss);
+
+    document.getElementById('pv-sod').textContent = '$' + fmt(pvSod);
+
+    const pvPosEl = document.getElementById('pv-pos');
+    pvPosEl.textContent = pvPos;
+
+    const pvFloatEl = document.getElementById('pv-float');
+    pvFloatEl.textContent = pct(pvFloat);
+    setClass(pvFloatEl, pvFloat);
+
+    const pvLossEl = document.getElementById('pv-loss');
+    pvLossEl.textContent = pct(pvLoss);
+    setClass(pvLossEl, pvLoss);
+
+    document.getElementById('pv-loss-pct-lbl').textContent = pvLossAbs.toFixed(1) + '% of quota';
+    const pvBar = document.getElementById('pv-bar');
+    pvBar.style.width = clamp(pvLossAbs, 0, 100) + '%';
+    if(pvLossAbs > 75) pvBar.classList.add('danger');
+    else pvBar.classList.remove('danger');
+
+    const pvBadge = document.getElementById('pv-badge');
+    const pvStatusEl = document.getElementById('pv-status');
+    if(d.pv_wiped) {
+      pvBadge.textContent = 'WIPED';
+      pvBadge.className = 'engine-badge badge-wiped';
+      pvStatusEl.textContent = 'WIPED';
+      pvStatusEl.className = 'st-val danger';
+    } else {
+      pvBadge.textContent = 'ACTIVE';
+      pvBadge.className = 'engine-badge badge-active';
+      pvStatusEl.textContent = 'ACTIVE';
+      pvStatusEl.className = 'st-val ok';
+    }
+
+    // Status tiles
+    const newsEl = document.getElementById('news');
+    if(d.news_halt) {
+      newsEl.textContent = 'HALTED';
+      newsEl.className = 'st-val danger';
+    } else {
+      newsEl.textContent = 'CLEAR';
+      newsEl.className = 'st-val ok';
+    }
+
+    const ltEl = document.getElementById('last-trigger');
+    ltEl.textContent = d.last_trigger || 'None';
+    ltEl.className = (d.last_trigger && d.last_trigger !== 'None') ? 'st-val warn' : 'st-val ok';
+  }
+
+  // Initial fetch then poll every 5 seconds
+  fetchData();
+  setInterval(fetchData, 5000);
+</script>
+
+</body>
+</html>
