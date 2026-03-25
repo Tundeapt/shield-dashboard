@@ -12,7 +12,8 @@ export default async function handler(req, res) {
       .select('*')
       .eq('account_id', 'main')
       .order('updated_at', { ascending: false })
-      .limit(1);
+      .limit(1)
+      .single();
 
     if (error) throw error;
 
