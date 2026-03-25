@@ -18,8 +18,13 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: error.message });
     }
 
-    return res.status(200).json(data[0] || {});
-    
+    // 🔥 SAFE RETURN (no crash)
+    if (!data || data.length === 0) {
+      return res.status(200).json({});
+    }
+
+    return res.status(200).json(data[0]);
+
   } catch (err) {
     console.error("SERVER ERROR:", err);
     return res.status(500).json({ error: err.message });
