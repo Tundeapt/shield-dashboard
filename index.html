@@ -1,19 +1,207 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><title>SHIELD — Brockway Command</title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>:root {  --g1: #91CE4F; /* primary lime green — logo arc */  --g2: #00AD54; /* deep green */  --g3: #FEFE4F; /* yellow-green curve */  --r: #861B21; /* red signal line */  --bg: #0A0D07; /* near-black organic */  --bg2:#0F140A;  --bg3:#141A0D;  --b: rgba(145,206,79,0.12);  --b2: rgba(145,206,79,0.06);  --t: #D4E8B0;  --t2: #7A9A60;  --m: #2A3A1A;  --head:'Orbitron',monospace;  --body:'DM Sans',sans-serif;}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}html,body{width:100%;height:100%;background:var(--bg);color:var(--t);font-family:var(--body);overflow-x:hidden;}
-/* ── BACKGROUND ── */.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;}.bg-fx::before{content:'';position:absolute;inset:0;  background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(145,206,79,0.04) 0%,transparent 60%),var(--bg);}.bg-fx::after{content:'';position:absolute;inset:0;  background-image:linear-gradient(rgba(145,206,79,0.02) 1px,transparent 1px),    linear-gradient(90deg,rgba(145,206,79,0.02) 1px,transparent 1px);  background-size:40px 40px;}.scan{position:fixed;top:0;left:0;right:0;height:1px;  background:linear-gradient(90deg,transparent,rgba(145,206,79,0.06),transparent);  animation:scan 10s linear infinite;z-index:1;pointer-events:none;}@keyframes scan{from{top:0;}to{top:100%}}
-/* ── LOGIN ── */#login{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;  background:var(--bg);padding:24px;}.lbox{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--b);  padding:40px 32px;position:relative;animation:fadeUp 0.6s ease;}@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}.lbox::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;  background:linear-gradient(90deg,transparent,var(--g1),transparent);}.l-head{display:flex;align-items:center;gap:14px;margin-bottom:36px;}.l-logo{width:44px;height:44px;border-radius:50%;border:1px solid var(--g1);  box-shadow:0 0 20px rgba(145,206,79,0.2);object-fit:cover;}.l-brand{font-family:var(--head);font-size:20px;font-weight:900;color:var(--g1);letter-spacing:5px;}.l-sub{font-size:10px;color:var(--t2);letter-spacing:2px;margin-top:2px;}.l-label{font-size:9px;color:var(--g1);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:10px;opacity:0.8;}.l-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--b);  color:var(--t);font-family:var(--head);font-size:16px;padding:10px 0;  outline:none;letter-spacing:3px;caret-color:var(--g1);}.l-input::placeholder{color:var(--m);font-size:13px;letter-spacing:2px;}.l-input.shake{animation:shake 0.3s ease;}@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}.l-btn{width:100%;margin-top:28px;padding:14px;background:var(--g1);color:var(--bg);  border:none;font-family:var(--head);font-weight:900;font-size:11px;  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}.l-btn:hover{background:var(--g2);box-shadow:0 0 30px rgba(145,206,79,0.3);}.l-btn:disabled{opacity:0.4;}.l-err{margin-top:10px;font-size:10px;color:var(--r);letter-spacing:1px;text-align:center;min-height:14px;}.l-footer{margin-top:20px;font-size:9px;color:var(--t2);letter-spacing:1px;text-align:center;}
-/* ── DASHBOARD ── */#dash{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:2;}
-/* TOP BAR */.topbar{display:flex;align-items:center;justify-content:space-between;  padding:12px 16px;border-bottom:1px solid var(--b);  background:rgba(10,13,7,0.9);backdrop-filter:blur(10px);  position:sticky;top:0;z-index:50;flex-shrink:0;}.tb-l{display:flex;align-items:center;gap:10px;}.tb-logo{width:28px;height:28px;border-radius:50%;border:1px solid var(--g1);  box-shadow:0 0 10px rgba(145,206,79,0.2);object-fit:cover;}.tb-name{font-family:var(--head);font-size:12px;font-weight:900;color:var(--g1);letter-spacing:3px;}.tb-r{display:flex;align-items:center;gap:10px;}.hb{display:flex;align-items:center;gap:6px;}.hb-dot{width:6px;height:6px;border-radius:50%;}.hb-dot.live{background:var(--g1);box-shadow:0 0 8px var(--g1);animation:hbp 1.5s infinite;}.hb-dot.delayed{background:var(--g3);box-shadow:0 0 6px var(--g3);animation:hbp 3s infinite;}.hb-dot.stale{background:var(--r);box-shadow:0 0 8px var(--r);}.hb-dot.dead{background:#333;}@keyframes hbp{0%,100%{opacity:1;}50%{opacity:0.3;}}.hb-txt{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-family:var(--head);}.hb-txt.live{color:var(--g1);}.hb-txt.delayed{color:var(--g3);}.hb-txt.stale{color:var(--r);}.hb-txt.dead{color:#444;}.disc{background:none;border:1px solid rgba(134,27,33,0.4);color:rgba(134,27,33,0.7);  font-family:var(--head);font-size:8px;letter-spacing:2px;padding:4px 8px;cursor:pointer;}.disc:hover{border-color:var(--r);color:var(--r);}
-/* TABS */.ptabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--b);  background:var(--bg2);-webkit-overflow-scrolling:touch;}.ptabs::-webkit-scrollbar{display:none;}.ptab{flex-shrink:0;padding:10px 20px;font-family:var(--head);font-size:9px;  letter-spacing:2px;text-transform:uppercase;color:var(--t2);  border:none;border-bottom:2px solid transparent;background:transparent;  cursor:pointer;transition:all 0.2s;white-space:nowrap;}.ptab.on{color:var(--g1);border-bottom-color:var(--g1);}
-/* MAIN CONTENT */.main{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:800px;width:100%;margin:0 auto;}
-/* ACCOUNT CARD */.account-card{background:var(--bg2);border:1px solid var(--b);padding:20px;  position:relative;overflow:hidden;}.account-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;  background:linear-gradient(90deg,transparent,var(--g1),transparent);}.ac-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}.ac-stat label{display:block;font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}.ac-stat .val{font-family:var(--head);font-size:22px;font-weight:900;color:var(--t);}.ac-stat .val.p{color:var(--g1);}.ac-stat .val.n{color:var(--r);}.ac-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.sess-badge{display:flex;align-items:center;gap:6px;padding:8px 12px;  background:var(--bg3);border:1px solid var(--b);}.sess-badge .dot{width:5px;height:5px;border-radius:50%;}.sess-badge .dot.ok{background:var(--g1);}.sess-badge .dot.bad{background:var(--r);}.sess-badge .txt{font-family:var(--head);font-size:9px;letter-spacing:1px;}.sess-badge .txt.ok{color:var(--g1);}.sess-badge .txt.bad{color:var(--r);}.ac-trigger{padding:8px 12px;background:var(--bg3);border:1px solid var(--b);}.at-label{font-size:7px;color:var(--t2);letter-spacing:2px;margin-bottom:3px;}.at-val{font-size:10px;color:var(--t);font-family:var(--head);letter-spacing:1px;}
-/* RING CARD */.ring-card{background:var(--bg2);border:1px solid var(--b);padding:20px;  display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;}.ring-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;  background:linear-gradient(90deg,transparent,var(--g1),transparent);}.ring-wrap{position:relative;width:180px;height:180px;margin:0 auto 16px;}.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}.ring-track{fill:none;stroke:rgba(145,206,79,0.08);stroke-width:8;}.ring-glow{fill:none;stroke-width:8;stroke-linecap:round;  filter:blur(4px);opacity:0.5;transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke 0.6s;}.ring-main{fill:none;stroke-width:8;stroke-linecap:round;  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke 0.6s;}.ring-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}.rc-profile{font-size:7px;color:var(--g1);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;opacity:0.7;font-family:var(--head);}.rc-bal{font-family:var(--head);font-size:22px;font-weight:900;color:var(--t);line-height:1;}.rc-lbl{font-size:7px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}.rc-eq{font-size:10px;color:var(--t2);margin-top:4px;}.rc-pnl{font-family:var(--head);font-size:16px;font-weight:700;margin-top:4px;}.rc-pnl.p{color:var(--g1);text-shadow:0 0 15px rgba(145,206,79,0.3);}.rc-pnl.n{color:var(--r);}.risk-info{text-align:center;}.risk-lbl{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;}.risk-val{font-family:var(--head);font-size:16px;font-weight:700;color:var(--g1);}
-/* ENGINE CARDS */.engine-card{background:var(--bg2);border:1px solid var(--b);padding:16px;position:relative;overflow:hidden;}.engine-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;}.engine-card.axm::after{background:var(--g1);}.engine-card.pv::after{background:var(--g3);}.engine-card.thr::after{background:var(--g2);}.ec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}.ec-name{font-family:var(--head);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;}.axm .ec-name{color:var(--g1);}.pv .ec-name{color:var(--g3);}.thr .ec-name{color:var(--g2);}.ec-badge{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border:1px solid;}.ec-badge.ok{color:var(--g1);border-color:rgba(145,206,79,0.3);}.ec-badge.bad{color:var(--r);border-color:rgba(134,27,33,0.3);}.ec-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}.ec-stat{padding:10px;background:var(--bg3);border:1px solid var(--b2);}.ec-stat label{display:block;font-size:7px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}.ec-stat .v{font-family:var(--head);font-size:16px;font-weight:700;color:var(--t);}.ec-stat .v.p{color:var(--g1);}.ec-stat .v.n{color:var(--r);}.ec-bar-wrap{margin-top:4px;}.ec-bar-lbl{display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-bottom:4px;}.ec-bar-track{height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden;}.ec-bar-fill{height:100%;border-radius:1px;transition:width 0.8s cubic-bezier(.4,0,.2,1),background 0.5s;}
-/* WIN/LOSS */.wl-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}.wl-cell{background:var(--bg3);border:1px solid var(--b);padding:12px;text-align:center;}.wl-n{font-family:var(--head);font-size:28px;font-weight:900;}.wl-n.w{color:var(--g1);}.wl-n.l{color:var(--r);}.wl-t{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
-/* STATUS GRID */.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.sb{background:var(--bg2);border:1px solid var(--b);padding:12px;  display:flex;align-items:center;gap:10px;}.sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}.sb-dot.ok{background:var(--g1);box-shadow:0 0 5px var(--g1);}.sb-dot.bad{background:var(--r);box-shadow:0 0 5px var(--r);}.sb-dot.warn{background:var(--g3);box-shadow:0 0 5px var(--g3);}.sb-lbl{font-size:8px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px;}.sb-val{font-family:var(--head);font-size:10px;font-weight:700;letter-spacing:1px;}.sb-val.ok{color:var(--g1);}.sb-val.bad{color:var(--r);}.sb-val.warn{color:var(--g3);}
-/* EVENT FEED */.feed-card{background:var(--bg2);border:1px solid var(--b);padding:16px;}.feed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}.feed-title{font-family:var(--head);font-size:9px;letter-spacing:3px;color:var(--g1);text-transform:uppercase;}.feed-count{font-size:8px;color:var(--t2);letter-spacing:1px;}.feed{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}.feed::-webkit-scrollbar{width:2px;}.feed::-webkit-scrollbar-thumb{background:var(--g1);opacity:0.3;}.ev{padding:8px 10px;border-left:2px solid;animation:evIn 0.4s ease;}@keyframes evIn{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}.ev.info{border-color:rgba(145,206,79,0.4);background:var(--bg3);}.ev.protect{border-color:var(--g1);background:rgba(145,206,79,0.04);}.ev.warn{border-color:var(--g3);background:rgba(254,254,79,0.04);}.ev.danger{border-color:var(--r);background:rgba(134,27,33,0.06);}.ev-time{font-size:7px;color:var(--t2);margin-bottom:2px;}.ev-title{font-family:var(--head);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}.ev.info .ev-title{color:var(--g1);}.ev.protect .ev-title{color:var(--g1);}.ev.warn .ev-title{color:var(--g3);}.ev.danger .ev-title{color:var(--r);}.ev-detail{font-size:9px;color:var(--t2);line-height:1.5;}
-/* SECTION HEADER */.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}.sec-title{font-family:var(--head);font-size:9px;letter-spacing:3px;color:var(--g1);text-transform:uppercase;}
-/* LOADING */#loading{position:fixed;inset:0;z-index:998;background:var(--bg);  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;}.ld-ring{width:56px;height:56px;border:1px solid rgba(145,206,79,0.1);  border-top:1px solid var(--g1);border-radius:50%;animation:spin 0.9s linear infinite;  box-shadow:0 0 20px rgba(145,206,79,0.1);}@keyframes spin{to{transform:rotate(360deg);}}.ld-txt{font-family:var(--head);font-size:9px;color:var(--g1);letter-spacing:4px;  text-transform:uppercase;animation:blink 1.5s infinite;}@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
-/* FOOTER */.dash-footer{padding:16px;text-align:center;font-size:9px;color:var(--t2);  letter-spacing:1px;border-top:1px solid var(--b);margin-top:8px;}
-/* DESKTOP: side by side panels */@media(min-width:768px){  .main{padding:20px;gap:16px;}  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}  .status-grid{grid-template-columns:repeat(4,1fr);}}</style></head><body><div class="bg-fx"></div><div class="scan"></div>
-<!-- LOADING --><div id="loading">  <div class="ld-ring"></div>  <div class="ld-txt">Initializing</div></div>
-<!-- LOGIN --><div id="login" style="display:none;">  <div class="lbox">    <div class="l-head">      <img class="l-logo" src="data:image/jpeg;base64,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
+import { useState, useEffect, useCallback, useRef } from "react";
+import LoadingScreen from "@/components/shield/LoadingScreen";
+import LoginScreen from "@/components/shield/LoginScreen";
+import TopBar from "@/components/shield/TopBar";
+import AccountCard from "@/components/shield/AccountCard";
+import ArcGauge from "@/components/shield/ArcGauge";
+import EngineCard from "@/components/shield/EngineCard";
+import SessionCard from "@/components/shield/SessionCard";
+import SystemStatus from "@/components/shield/SystemStatus";
+import EventFeed, { type FeedEvent } from "@/components/shield/EventFeed";
+import EmptyState from "@/components/shield/EmptyState";
+import { validateKey, fetchState, type AccountData } from "@/lib/shield-api";
+
+type AppState = "loading" | "login" | "dashboard";
+type Heartbeat = "live" | "delayed" | "stale" | "dead";
+
+const POLL_INTERVAL = 5000;
+
+function formatCurrency(n?: number): string {
+  if (n == null) return "—";
+  return (n < 0 ? "-" : "") + "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function timeAgo(iso?: string): string {
+  if (!iso) return "";
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 10) return "Updated just now";
+  if (diff < 60) return `Updated ${diff}s ago`;
+  if (diff < 3600) return `Updated ${Math.floor(diff / 60)}m ago`;
+  return `Updated ${Math.floor(diff / 3600)}h ago`;
+}
+
+function getHeartbeat(iso?: string): Heartbeat {
+  if (!iso) return "dead";
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 30) return "live";
+  if (diff < 120) return "delayed";
+  if (diff < 600) return "stale";
+  return "dead";
+}
+
+const Index = () => {
+  const [state, setState] = useState<AppState>("loading");
+  const [validating, setValidating] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [authKey, setAuthKey] = useState("");
+  const [accounts, setAccounts] = useState<AccountData[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [events] = useState<FeedEvent[]>([]);
+  const pollRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Boot sequence
+  useEffect(() => {
+    const t = setTimeout(() => setState("login"), 1800);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Polling
+  useEffect(() => {
+    if (state !== "dashboard" || !authKey) return;
+    const poll = async () => {
+      const data = await fetchState(authKey);
+      if (data.length > 0) setAccounts(data);
+    };
+    poll();
+    pollRef.current = setInterval(poll, POLL_INTERVAL);
+    return () => clearInterval(pollRef.current);
+  }, [state, authKey]);
+
+  const handleLogin = useCallback(async (key: string) => {
+    setValidating(true);
+    setLoginError("");
+    const result = await validateKey(key);
+    setValidating(false);
+    if (!result.valid) {
+      setLoginError("Access denied — invalid key");
+      return;
+    }
+    // Key is valid — proceed even with empty data
+    setAuthKey(key);
+    setAccounts(result.data);
+    setState("dashboard");
+  }, []);
+
+  const handleExit = useCallback(() => {
+    clearInterval(pollRef.current);
+    setAuthKey("");
+    setAccounts([]);
+    setActiveIdx(0);
+    setState("login");
+  }, []);
+
+  if (state === "loading") return <LoadingScreen />;
+
+  if (state === "login") {
+    return (
+      <>
+        <div className="bg-fx" />
+        <div className="hud-scan" />
+        <LoginScreen onLogin={handleLogin} isValidating={validating} error={loginError} />
+      </>
+    );
+  }
+
+  const acct = accounts[activeIdx] || accounts[0];
+  const hasData = accounts.length > 0 && acct;
+  const hb = hasData ? getHeartbeat(acct.updated_at) : "dead";
+
+  return (
+    <>
+      <div className="bg-fx" />
+      <div className="hud-scan" />
+      <div className="flex flex-col min-h-screen relative z-[2]">
+        <TopBar heartbeat={hb} onExit={handleExit} />
+
+        {/* Profile tabs when multiple accounts */}
+        {accounts.length > 1 && (
+          <div className="flex overflow-x-auto border-b border-border bg-shield-surface">
+            {accounts.map((a, i) => (
+              <button
+                key={a.account_id || i}
+                onClick={() => setActiveIdx(i)}
+                className={`shrink-0 py-2.5 px-5 text-[9px] tracking-[2px] uppercase border-b-2 bg-transparent cursor-pointer transition-all whitespace-nowrap ${
+                  i === activeIdx
+                    ? "text-shield-blue border-b-shield-blue"
+                    : "text-shield-sub border-b-transparent"
+                }`}
+              >
+                {a.account_id || a.engine || `Account ${i + 1}`}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!hasData ? (
+          <EmptyState />
+        ) : (
+          <div className="flex-1 p-3 md:p-5 flex flex-col gap-2.5 md:gap-3.5 max-w-[860px] w-full mx-auto">
+            <AccountCard
+              balance={formatCurrency(acct.balance)}
+              equity={formatCurrency(acct.equity)}
+              pnl={formatCurrency(acct.floating_pnl)}
+              pnlSign={(acct.floating_pnl ?? 0) >= 0 ? "p" : "n"}
+              accountId={acct.account_id || "—"}
+              sessionActive={acct.session_active !== false}
+              lastEvent={acct.last_event || "None"}
+              timestamp={timeAgo(acct.updated_at)}
+            />
+
+            <ArcGauge
+              balance={formatCurrency(acct.balance)}
+              equity={formatCurrency(acct.equity)}
+              pnl={formatCurrency(acct.floating_pnl)}
+              pnlSign={(acct.floating_pnl ?? 0) >= 0 ? "p" : "n"}
+              exposure={`${acct.exposure ?? 0}%`}
+              profile={acct.profile || "—"}
+              percent={acct.exposure ?? 0}
+            />
+
+            {acct.engine && (
+              <div>
+                <div className="flex items-center justify-between mb-1.5 px-0.5">
+                  <div className="text-[8px] font-semibold text-shield-blue tracking-[4px] uppercase">Profile</div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <EngineCard
+                    name={acct.engine}
+                    type={acct.engine?.toLowerCase().includes("delta") ? "delta" : "inst"}
+                    status="ok"
+                    stats={[
+                      { label: "Open P&L", value: formatCurrency(acct.floating_pnl), color: (acct.floating_pnl ?? 0) >= 0 ? "p" : "n" },
+                      { label: "Positions", value: String(acct.open_positions ?? 0), color: "b" },
+                      { label: "Win Rate", value: `${acct.win_rate ?? 0}%`, color: (acct.win_rate ?? 0) >= 50 ? "p" : "n" },
+                      { label: "Drawdown", value: `${acct.drawdown ?? 0}%`, color: "n" },
+                    ]}
+                    barLabel="Exposure"
+                    barValue={acct.exposure ?? 0}
+                    barMax={`${acct.exposure ?? 0} / 100%`}
+                  />
+                </div>
+              </div>
+            )}
+
+            <SessionCard wins={acct.wins ?? 0} losses={acct.losses ?? 0} />
+
+            <SystemStatus
+              items={[
+                { label: "News", value: "CLEAR", status: "ok" },
+                { label: "Velocity", value: "SAFE", status: "ok" },
+                { label: "Floor", value: "ARMED", status: "ok" },
+                { label: "Session", value: hb === "live" ? "LIVE" : hb === "delayed" ? "DELAYED" : "OFFLINE", status: hb === "live" ? "ok" : hb === "delayed" ? "warn" : "bad" },
+              ]}
+            />
+
+            {events.length > 0 && <EventFeed events={events} />}
+
+            <div className="py-3.5 px-4 text-center text-[8px] text-shield-dim tracking-[1px] border-t border-border mt-1.5">
+              SHIELD v3.1 — Brockway Trading &amp; Technical Analysis Limited
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default Index;
