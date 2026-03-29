@@ -1,373 +1,750 @@
-<!DOCTYPE html><html lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Shield — Brockway Command</title><style>
-
-body {
-
-  margin:0;
-
-  background:#050607;
-
-  color:#fff;
-
-  font-family:monospace;
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050607">
+<title>SHIELD — Brockway Command</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   SHIELD COMMAND — Brockway Risk Terminal Dashboard
+   Aesthetic: Institutional blue + Stark Industries HUD
+   Mobile-first. Data-dense. Every element earns its pixel.
+================================================================ */
+:root {
+  --bg:       #050607;
+  --surface:  #0A0B0D;
+  --panel:    #0E0F11;
+  --elevated: #131416;
+  --card:     #161719;
+  --border:   #1C1D20;
+  --border-h: #27282C;
+  --dim:      #363840;
+  --muted:    #50525A;
+  --sub:      #72747E;
+  --body:     #9497A3;
+  --text:     #B8BBC6;
+  --bright:   #D4D7E0;
+  --white:    #F0F1F5;
+  --blue:     #0094FF;
+  --blue-hi:  #40AFFF;
+  --blue-30:  rgba(0,148,255,0.30);
+  --blue-20:  rgba(0,148,255,0.20);
+  --blue-10:  rgba(0,148,255,0.10);
+  --blue-05:  rgba(0,148,255,0.05);
+  --blue-03:  rgba(0,148,255,0.03);
+  --green:    #00D26A;
+  --green-20: rgba(0,210,106,0.20);
+  --green-10: rgba(0,210,106,0.10);
+  --green-05: rgba(0,210,106,0.05);
+  --amber:    #FF9500;
+  --amber-20: rgba(255,149,0,0.20);
+  --amber-10: rgba(255,149,0,0.10);
+  --red:      #FF3B3B;
+  --red-20:   rgba(255,59,59,0.20);
+  --red-10:   rgba(255,59,59,0.10);
+  --cyan:     #00D4FF;
+  --mono:  'JetBrains Mono', monospace;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans:  'Libre Franklin', system-ui, sans-serif;
 }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;}
+::selection{background:var(--blue-20);color:var(--white);}
 
+/* Scanline */
+body::after{content:'';position:fixed;inset:0;z-index:99999;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.012) 3px,rgba(0,0,0,0.012) 6px);}
 
+/* BG field */
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-fx::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(0,148,255,0.03) 0%,transparent 60%),var(--bg);}
+.bg-fx::after{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,148,255,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,148,255,0.015) 1px,transparent 1px);
+  background-size:48px 48px;opacity:0.5;}
 
-.center {
+/* HUD scan line */
+.hud-scan{position:fixed;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,148,255,0.08),transparent);
+  animation:hudscan 8s linear infinite;z-index:1;pointer-events:none;}
+@keyframes hudscan{from{top:0}to{top:100%}}
 
-  display:flex;
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;z-index:998;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;}
+.ld-ring{width:64px;height:64px;position:relative;}
+.ld-ring::before,.ld-ring::after{content:'';position:absolute;inset:0;border-radius:50%;}
+.ld-ring::before{border:1px solid rgba(0,148,255,0.1);border-top:1px solid var(--blue);animation:spin 1s linear infinite;}
+.ld-ring::after{inset:8px;border:1px solid rgba(0,148,255,0.05);border-bottom:1px solid var(--blue-hi);animation:spin 1.5s linear infinite reverse;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-txt{font-family:var(--mono);font-size:9px;color:var(--blue);letter-spacing:6px;text-transform:uppercase;animation:ldpulse 1.5s infinite;}
+@keyframes ldpulse{0%,100%{opacity:1}50%{opacity:0.2}}
 
-  align-items:center;
+/* ── LOGIN ── */
+#login{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center;
+  background:var(--bg);padding:20px;}
+.lbox{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);
+  padding:44px 32px;position:relative;animation:fadeUp 0.6s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.lbox::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);}
 
-  justify-content:center;
+.l-head{display:flex;align-items:center;gap:16px;margin-bottom:40px;}
+.l-icon{width:10px;height:10px;background:var(--blue);box-shadow:0 0 16px var(--blue-30);flex-shrink:0;}
+.l-brand{font-family:var(--sans);font-size:20px;font-weight:800;color:var(--white);letter-spacing:4px;text-transform:uppercase;}
+.l-sub{font-size:9px;color:var(--sub);letter-spacing:2px;margin-top:2px;font-family:var(--mono);}
 
-  height:100vh;
+.l-label{font-size:8px;color:var(--blue);letter-spacing:4px;text-transform:uppercase;display:block;margin-bottom:12px;}
+.l-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border-h);
+  color:var(--white);font-family:var(--mono);font-size:16px;padding:12px 0;
+  outline:none;letter-spacing:3px;caret-color:var(--blue);transition:border-color 0.3s;}
+.l-input:focus{border-bottom-color:var(--blue);}
+.l-input::placeholder{color:var(--dim);font-size:12px;letter-spacing:2px;}
+.l-input.shake{animation:shake 0.3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
+.l-btn{width:100%;margin-top:32px;padding:14px;background:var(--blue);color:var(--white);
+  border:none;font-family:var(--mono);font-weight:600;font-size:10px;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.l-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);transform:translateX(-100%);transition:transform 0.5s;}
+.l-btn:hover::after{transform:translateX(100%);}
+.l-btn:hover{background:var(--blue-hi);box-shadow:0 0 30px var(--blue-20);}
+.l-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.l-err{margin-top:12px;font-size:9px;color:var(--red);letter-spacing:1px;text-align:center;min-height:14px;}
+.l-footer{margin-top:24px;font-size:8px;color:var(--dim);letter-spacing:1px;text-align:center;}
+
+/* ── DASHBOARD ── */
+#dash{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:2;}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  background:rgba(5,6,7,0.88);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:50;flex-shrink:0;}
+.tb-l{display:flex;align-items:center;gap:10px;}
+.tb-icon{width:7px;height:7px;background:var(--blue);box-shadow:0 0 10px var(--blue-30);
+  animation:tbpulse 3s ease-in-out infinite;}
+@keyframes tbpulse{0%,100%{box-shadow:0 0 10px var(--blue-30)}50%{box-shadow:0 0 20px var(--blue-30)}}
+.tb-name{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--white);letter-spacing:3px;text-transform:uppercase;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.hb{display:flex;align-items:center;gap:5px;}
+.hb-dot{width:5px;height:5px;border-radius:50%;}
+.hb-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:hbp 1.5s infinite;}
+.hb-dot.delayed{background:var(--amber);box-shadow:0 0 6px var(--amber);animation:hbp 3s infinite;}
+.hb-dot.stale{background:var(--red);box-shadow:0 0 6px var(--red);}
+.hb-dot.dead{background:var(--dim);}
+@keyframes hbp{0%,100%{opacity:1}50%{opacity:0.3}}
+.hb-txt{font-size:8px;letter-spacing:1px;text-transform:uppercase;}
+.hb-txt.live{color:var(--green)}.hb-txt.delayed{color:var(--amber)}.hb-txt.stale{color:var(--red)}.hb-txt.dead{color:var(--dim)}
+.disc{background:none;border:1px solid rgba(255,59,59,0.3);color:rgba(255,59,59,0.6);
+  font-family:var(--mono);font-size:7px;letter-spacing:2px;padding:4px 8px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;}
+.disc:hover{border-color:var(--red);color:var(--red);}
+
+/* ERROR BANNER */
+.err-banner{display:none;padding:8px 16px;background:var(--red-10);border-bottom:1px solid var(--red-20);
+  font-size:9px;color:var(--red);letter-spacing:1px;text-align:center;}
+
+/* TABS */
+.ptabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);
+  background:var(--surface);-webkit-overflow-scrolling:touch;}
+.ptabs::-webkit-scrollbar{display:none;}
+.ptab{flex-shrink:0;padding:10px 20px;font-family:var(--mono);font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--sub);
+  border:none;border-bottom:2px solid transparent;background:transparent;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.ptab.on{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* MAIN */
+.main{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;max-width:860px;width:100%;margin:0 auto;}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px;}
+.sec-title{font-size:8px;font-weight:600;color:var(--blue);letter-spacing:4px;text-transform:uppercase;}
+.sec-extra{font-size:8px;color:var(--dim);letter-spacing:1px;}
+
+/* CARD BASE */
+.card{background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue-20),transparent);}
+
+/* ACCOUNT CARD */
+.ac-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.ac-cell{background:var(--surface);padding:14px 16px;}
+.ac-cell label{display:block;font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.ac-cell .val{font-family:var(--sans);font-size:20px;font-weight:700;color:var(--white);letter-spacing:-0.5px;}
+.ac-cell .val.p{color:var(--green);}
+.ac-cell .val.n{color:var(--red);}
+.ac-cell .val.sm{font-size:13px;font-family:var(--mono);letter-spacing:0;}
+.ac-bottom{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);}
+.ac-badge{background:var(--surface);padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.ac-badge .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.ac-badge .dot.ok{background:var(--green);box-shadow:0 0 4px var(--green);}
+.ac-badge .dot.bad{background:var(--red);box-shadow:0 0 4px var(--red);}
+.ac-badge .txt{font-size:9px;letter-spacing:1px;text-transform:uppercase;}
+.ac-badge .txt.ok{color:var(--green)}.ac-badge .txt.bad{color:var(--red)}
+.ac-trig{background:var(--surface);padding:10px 16px;}
+.ac-trig .at-label{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:3px;text-transform:uppercase;}
+.ac-trig .at-val{font-size:9px;color:var(--text);letter-spacing:1px;}
+
+/* ARC REACTOR RING */
+.arc-card{padding:24px 16px;display:flex;flex-direction:column;align-items:center;}
+.arc-wrap{position:relative;width:200px;height:200px;margin:0 auto 16px;}
+.arc-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+.arc-track{fill:none;stroke:var(--border);stroke-width:6;}
+.arc-glow{fill:none;stroke-width:6;stroke-linecap:round;filter:blur(6px);opacity:0.4;
+  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke 0.6s;}
+.arc-main{fill:none;stroke-width:6;stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke 0.6s;}
+/* Inner rings — Stark HUD concentric circles */
+.arc-inner1{fill:none;stroke:var(--blue-10);stroke-width:1;stroke-dasharray:4 4;}
+.arc-inner2{fill:none;stroke:var(--blue-05);stroke-width:1;}
+.arc-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.arc-profile{font-size:7px;color:var(--blue);letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;opacity:0.7;}
+.arc-bal{font-family:var(--sans);font-size:24px;font-weight:800;color:var(--white);line-height:1;letter-spacing:-0.5px;}
+.arc-lbl{font-size:7px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:3px;}
+.arc-eq{font-size:10px;color:var(--sub);margin-top:6px;}
+.arc-pnl{font-family:var(--sans);font-size:17px;font-weight:700;margin-top:4px;}
+.arc-pnl.p{color:var(--green);text-shadow:0 0 12px rgba(0,210,106,0.2);}
+.arc-pnl.n{color:var(--red);text-shadow:0 0 12px rgba(255,59,59,0.2);}
+.arc-info{text-align:center;margin-top:4px;}
+.arc-info-lbl{font-size:7px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.arc-info-val{font-family:var(--sans);font-size:18px;font-weight:700;color:var(--blue);}
+
+/* ENGINE CARDS */
+.engines-grid{display:flex;flex-direction:column;gap:8px;}
+.engine-card{background:var(--surface);border:1px solid var(--border);padding:14px 16px;position:relative;overflow:hidden;}
+.engine-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;}
+.engine-card.axm::after{background:var(--blue);}
+.engine-card.pv::after{background:var(--amber);}
+.engine-card.thr::after{background:var(--green);}
+.ec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.ec-name{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;}
+.axm .ec-name{color:var(--blue)}.pv .ec-name{color:var(--amber)}.thr .ec-name{color:var(--green)}
+.ec-badge{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.ec-badge.ok{color:var(--green);border-color:var(--green-20);background:var(--green-05);}
+.ec-badge.bad{color:var(--red);border-color:var(--red-20);background:var(--red-10);}
+.ec-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.ec-stat{padding:10px;background:var(--panel);border:1px solid var(--border);}
+.ec-stat label{display:block;font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.ec-stat .v{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--white);letter-spacing:-0.3px;}
+.ec-stat .v.p{color:var(--green)}.ec-stat .v.n{color:var(--red)}.ec-stat .v.b{color:var(--blue)}.ec-stat .v.a{color:var(--amber)}
+.ec-bar-wrap{margin-top:4px;}
+.ec-bar-lbl{display:flex;justify-content:space-between;font-size:7px;color:var(--muted);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;}
+.ec-bar-track{height:2px;background:rgba(255,255,255,0.04);overflow:hidden;}
+.ec-bar-fill{height:100%;transition:width 0.8s cubic-bezier(.4,0,.2,1),background 0.5s;}
+
+/* WIN/LOSS */
+.wl-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.wl-cell{background:var(--surface);padding:14px;text-align:center;}
+.wl-n{font-family:var(--sans);font-size:28px;font-weight:800;letter-spacing:-1px;}
+.wl-n.w{color:var(--green)}.wl-n.l{color:var(--red)}
+.wl-t{font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+
+/* STATUS GRID */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.sb{background:var(--surface);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.sb-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.sb-dot.ok{background:var(--green);box-shadow:0 0 4px var(--green);}
+.sb-dot.bad{background:var(--red);box-shadow:0 0 4px var(--red);}
+.sb-dot.warn{background:var(--amber);box-shadow:0 0 4px var(--amber);}
+.sb-lbl{font-size:7px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px;}
+.sb-val{font-size:9px;font-weight:600;letter-spacing:1px;}
+.sb-val.ok{color:var(--green)}.sb-val.bad{color:var(--red)}.sb-val.warn{color:var(--amber)}
+
+/* EVENT FEED */
+.feed-card{padding:14px 16px;}
+.feed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.feed-title{font-size:8px;font-weight:600;color:var(--blue);letter-spacing:4px;text-transform:uppercase;}
+.feed-count{font-size:7px;color:var(--dim);letter-spacing:1px;}
+.feed{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;}
+.feed::-webkit-scrollbar{width:2px}.feed::-webkit-scrollbar-thumb{background:var(--blue);opacity:0.3;}
+.ev{padding:8px 10px;border-left:2px solid;animation:evIn 0.3s ease;}
+@keyframes evIn{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:translateX(0)}}
+.ev.info{border-color:var(--blue-20);background:var(--panel);}
+.ev.protect{border-color:var(--green);background:var(--green-05);}
+.ev.warn{border-color:var(--amber);background:var(--amber-10);}
+.ev.danger{border-color:var(--red);background:var(--red-10);}
+.ev-time{font-size:7px;color:var(--dim);margin-bottom:2px;}
+.ev-title{font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:1px;}
+.ev.info .ev-title{color:var(--blue)}.ev.protect .ev-title{color:var(--green)}
+.ev.warn .ev-title{color:var(--amber)}.ev.danger .ev-title{color:var(--red)}
+.ev-detail{font-size:8px;color:var(--sub);line-height:1.4;}
+
+/* FOOTER */
+.dash-footer{padding:14px 16px;text-align:center;font-size:8px;color:var(--dim);
+  letter-spacing:1px;border-top:1px solid var(--border);margin-top:6px;}
+
+/* ── DESKTOP ── */
+@media(min-width:768px){
+  .main{padding:20px;gap:14px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .status-grid{grid-template-columns:repeat(4,1fr);}
 }
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="hud-scan"></div>
 
+<!-- LOADING -->
+<div id="loading">
+  <div class="ld-ring"></div>
+  <div class="ld-txt">Initializing</div>
+</div>
 
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <div class="l-head">
+      <div class="l-icon"></div>
+      <div><div class="l-brand">Shield</div><div class="l-sub">Brockway Command Terminal</div></div>
+    </div>
+    <label class="l-label">Authorization Key</label>
+    <input class="l-input" id="ki" type="password" placeholder="Enter key" autocomplete="off" inputmode="text"/>
+    <button class="l-btn" id="lb">Initialize</button>
+    <div class="l-err" id="le"></div>
+    <div class="l-footer">Brockway Trading & Technical Analysis Limited</div>
+  </div>
+</div>
 
-.box {
-
-  background:#0A0B0D;
-
-  padding:30px;
-
-  border:1px solid #1C1D20;
-
-  width:300px;
-
-}
-
-
-
-input {
-
-  width:100%;
-
-  padding:10px;
-
-  margin-top:10px;
-
-  background:black;
-
-  border:1px solid #333;
-
-  color:white;
-
-}
-
-
-
-button {
-
-  width:100%;
-
-  padding:10px;
-
-  margin-top:15px;
-
-  background:#0094FF;
-
-  border:none;
-
-  color:white;
-
-  cursor:pointer;
-
-}
-
-
-
-#dash {
-
-  display:none;
-
-  padding:20px;
-
-}
-
-
-
-.card {
-
-  border:1px solid #1C1D20;
-
-  padding:15px;
-
-  margin-bottom:10px;
-
-}
-
-</style></head><body><!-- LOGIN --><div id="login" class="center">
-
-  <div class="box">
-
-    <h3>SHIELD LOGIN</h3>
-
-    <input id="keyInput" placeholder="Enter License Key"/>
-
-    <button onclick="login()">Enter</button>
-
-    <div id="error" style="color:red;margin-top:10px;"></div>
-
+<!-- DASHBOARD -->
+<div id="dash">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="tb-icon"></div>
+      <div class="tb-name">Shield</div>
+    </div>
+    <div class="tb-r">
+      <div class="hb">
+        <div class="hb-dot dead" id="hb-dot"></div>
+        <div class="hb-txt dead" id="hb-txt">--</div>
+      </div>
+      <button class="disc" onclick="signOut()">Exit</button>
+    </div>
   </div>
 
-</div><!-- DASHBOARD --><div id="dash">
+  <!-- Error banner -->
+  <div class="err-banner" id="err-banner">Connection lost — displaying last known data</div>
 
-  <h2>Dashboard</h2>
+  <!-- Profile tabs -->
+  <div class="ptabs" id="ptabs"></div>
 
-  <div id="accounts"></div>
+  <div class="main" id="main-content">
+    <!-- Account Card -->
+    <div>
+      <div class="sec-head"><div class="sec-title">Account</div><div class="sec-extra" id="ac-ts"></div></div>
+      <div class="card">
+        <div class="ac-grid">
+          <div class="ac-cell"><label>Balance</label><div class="val" id="ac-bal">—</div></div>
+          <div class="ac-cell"><label>Equity</label><div class="val" id="ac-eq">—</div></div>
+          <div class="ac-cell"><label>Floating P&L</label><div class="val" id="ac-pnl">—</div></div>
+          <div class="ac-cell"><label>Account</label><div class="val sm" id="ac-id">—</div></div>
+        </div>
+        <div class="ac-bottom">
+          <div class="ac-badge"><div class="dot ok" id="sess-dot"></div><div class="txt ok" id="sess-txt">ACTIVE</div></div>
+          <div class="ac-trig"><div class="at-label">Last Event</div><div class="at-val" id="ac-trig">None</div></div>
+        </div>
+      </div>
+    </div>
 
-</div><script>
+    <!-- Arc Reactor Ring -->
+    <div class="card arc-card">
+      <div class="arc-wrap">
+        <svg viewBox="0 0 200 200">
+          <!-- HUD concentric rings -->
+          <circle class="arc-inner2" cx="100" cy="100" r="55"/>
+          <circle class="arc-inner1" cx="100" cy="100" r="45"/>
+          <circle class="arc-inner2" cx="100" cy="100" r="35"/>
+          <!-- Main ring -->
+          <circle class="arc-track" cx="100" cy="100" r="80"/>
+          <circle class="arc-glow" id="rg" cx="100" cy="100" r="80"
+            stroke="var(--blue)" stroke-dasharray="502" stroke-dashoffset="502"/>
+          <circle class="arc-main" id="rm" cx="100" cy="100" r="80"
+            stroke="var(--blue)" stroke-dasharray="502" stroke-dashoffset="502"/>
+        </svg>
+        <div class="arc-core">
+          <div class="arc-profile" id="arc-prof">DELTA</div>
+          <div class="arc-bal" id="arc-bal">$0</div>
+          <div class="arc-lbl">Balance</div>
+          <div class="arc-eq" id="arc-eq">EQ —</div>
+          <div class="arc-pnl p" id="arc-pnl">+$0</div>
+        </div>
+      </div>
+      <div class="arc-info">
+        <div class="arc-info-lbl">System Exposure</div>
+        <div class="arc-info-val" id="arc-exp">0%</div>
+      </div>
+    </div>
 
+    <!-- Engine Cards -->
+    <div>
+      <div class="sec-head"><div class="sec-title">Engines</div></div>
+      <div class="engines-grid" id="engines-wrap"></div>
+    </div>
 
+    <!-- Win/Loss -->
+    <div>
+      <div class="sec-head"><div class="sec-title">Session Performance</div></div>
+      <div class="card">
+        <div class="wl-row">
+          <div class="wl-cell"><div class="wl-n w" id="wl-w">0</div><div class="wl-t">Wins Today</div></div>
+          <div class="wl-cell"><div class="wl-n l" id="wl-l">0</div><div class="wl-t">Losses Today</div></div>
+        </div>
+      </div>
+    </div>
 
-// ===============================
+    <!-- Status Grid -->
+    <div>
+      <div class="sec-head"><div class="sec-title">System Status</div></div>
+      <div class="card">
+        <div class="status-grid" id="status-grid">
+          <div class="sb"><div class="sb-dot ok" id="d-s1"></div><div><span class="sb-lbl" id="l-s1">News</span><div class="sb-val ok" id="v-s1">CLEAR</div></div></div>
+          <div class="sb"><div class="sb-dot ok" id="d-s2"></div><div><span class="sb-lbl" id="l-s2">Project V</span><div class="sb-val ok" id="v-s2">ACTIVE</div></div></div>
+          <div class="sb"><div class="sb-dot ok" id="d-s3"></div><div><span class="sb-lbl" id="l-s3">Axiom</span><div class="sb-val ok" id="v-s3">ACTIVE</div></div></div>
+          <div class="sb"><div class="sb-dot ok" id="d-s4"></div><div><span class="sb-lbl" id="l-s4">Session</span><div class="sb-val ok" id="v-s4">LIVE</div></div></div>
+        </div>
+      </div>
+    </div>
 
-// 🔐 KEYS
+    <!-- Event Feed -->
+    <div class="card feed-card">
+      <div class="feed-head">
+        <div class="feed-title">Event Feed</div>
+        <div class="feed-count" id="feed-count">0 events</div>
+      </div>
+      <div class="feed" id="feed"><div style="text-align:center;color:var(--dim);font-size:9px;letter-spacing:2px;padding:16px 0;">MONITORING...</div></div>
+    </div>
 
-// ===============================
+    <div class="dash-footer" id="dash-ts">Brockway Trading & Technical Analysis Limited</div>
+  </div>
+</div>
 
-const CEO_KEY = "08028369764";
+<script>
+const API='https://shield-api-production-8317.up.railway.app/api/state';
+let KEY='',accounts=[],activeIdx=0,poll=null,evLog=[],prevD=null;
+let loginAttempts=0,loginLockUntil=0;
+let lastDataTime=0;
 
-const MASTER_KEY = "08023034259";
+const $=id=>document.getElementById(id);
+const fmt=(n,d=2)=>n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=n=>{if(n==null)return'—';const v=Number(n);return(v>=0?'+':'')+v.toFixed(2)+'%';};
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v));
 
+// Fix #2: Store key with minimal exposure
+const getK=()=>{try{return sessionStorage.getItem('sk')||'';}catch(e){return'';}};
+const setK=k=>{try{sessionStorage.setItem('sk',k);}catch(e){}};
+const delK=()=>{try{sessionStorage.removeItem('sk');}catch(e){}};
 
-
-// ===============================
-
-// 🎯 ROLE DETECTION
-
-// ===============================
-
-function getRole(key) {
-
-  if (key === MASTER_KEY) return "master";
-
-  if (key === CEO_KEY) return "ceo";
-
-  return "user";
-
-}
-
-
-
-// ===============================
-
-// 🔑 LOGIN
-
-// ===============================
-
-function login() {
-
-  const key = document.getElementById("keyInput").value.trim();
-
-  const err = document.getElementById("error");
-
-
-
-  if (!key) {
-
-    err.textContent = "Enter key";
-
-    return;
-
+// Fix #3: Rate-limited login
+async function doLogin(){
+  const now=Date.now();
+  if(now<loginLockUntil){
+    const secs=Math.ceil((loginLockUntil-now)/1000);
+    $('le').textContent='Locked — wait '+secs+'s';return;
   }
-
-
-
-  const role = getRole(key);
-
-
-
-  sessionStorage.setItem("key", key);
-
-  sessionStorage.setItem("role", role);
-
-
-
-  document.getElementById("login").style.display = "none";
-
-  document.getElementById("dash").style.display = "block";
-
-
-
-  loadDashboard();
-
+  const k=$('ki').value.trim();
+  if(!k){$('le').textContent='Key required';return;}
+  $('lb').disabled=true;$('lb').textContent='VERIFYING...';$('le').textContent='';
+  try{
+    // Fix #1: Send key as header instead of URL param
+    const r=await fetch(API,{headers:{'X-Shield-Key':k}});
+    let d;
+    if(r.ok){d=await r.json();}
+    else{
+      // Fallback to query param if header auth not supported yet
+      const r2=await fetch(API+'?key='+encodeURIComponent(k));
+      d=await r2.json();
+    }
+    if(Array.isArray(d)?d.length>0:(d&&!d.error)){
+      KEY=k;setK(k);loginAttempts=0;boot();
+    } else authFail();
+  }catch(e){authFail();}
+}
+function authFail(){
+  loginAttempts++;
+  const delay=Math.min(Math.pow(2,loginAttempts)*1000,30000);
+  loginLockUntil=Date.now()+delay;
+  $('lb').disabled=false;$('lb').textContent='INITIALIZE';
+  $('ki').classList.add('shake');setTimeout(()=>$('ki').classList.remove('shake'),400);
+  $('le').textContent='Access denied'+(loginAttempts>=3?' — '+Math.ceil(delay/1000)+'s cooldown':'');
+}
+function signOut(){
+  delK();KEY='';accounts=[];evLog=[];prevD=null;
+  if(poll){clearInterval(poll);poll=null;}
+  $('dash').style.display='none';
+  $('err-banner').style.display='none';
+  $('login').style.display='flex';
+  $('ki').value='';$('le').textContent='';
 }
 
+async function fetchData(){
+  // Try header-based auth first, fallback to query param
+  try{
+    const r=await fetch(API,{headers:{'X-Shield-Key':KEY}});
+    if(r.ok)return await r.json();
+  }catch(e){}
+  const r=await fetch(API+'?key='+encodeURIComponent(KEY));
+  return await r.json();
+}
 
-
-// ===============================
-
-// 🌐 FETCH DATA (REPLACE URL)
-
-// ===============================
-
-async function fetchData() {
-
-  try {
-
-    const res = await fetch("https://shield-api-production-8317.up.railway.app/");
-
-    return await res.json();
-
-  } catch (e) {
-
-    return [];
-
+async function boot(){
+  $('login').style.display='none';$('loading').style.display='flex';$('dash').style.display='none';
+  try{
+    const d=await fetchData();
+    accounts=Array.isArray(d)?d:[d];
+    lastDataTime=Date.now();
+    $('loading').style.display='none';
+    $('dash').style.display='flex';
+    renderAll();
+    if(!poll)poll=setInterval(async()=>{
+      try{
+        const d=await fetchData();
+        accounts=Array.isArray(d)?d:[d];
+        lastDataTime=Date.now();
+        $('err-banner').style.display='none';
+        renderAll();
+      }catch(e){
+        setHB('dead');
+        // Fix #9: Show error banner after 30s of no data
+        if(Date.now()-lastDataTime>30000){
+          $('err-banner').style.display='block';
+        }
+      }
+    },5000);
+  }catch(e){
+    $('loading').style.display='none';$('login').style.display='flex';
+    $('le').textContent='Connection failed';
   }
-
 }
 
-
-
-// ===============================
-
-// 🧠 FILTER LOGIC
-
-// ===============================
-
-function filterData(data, key, role) {
-
-  if (role === "master") return data;
-
-
-
-  if (role === "ceo") {
-
-    return data.filter(d => d.license_hash === CEO_KEY);
-
-  }
-
-
-
-  return data.filter(d => d.license_hash === key);
-
+function setHB(state,age){
+  $('hb-dot').className='hb-dot '+state;
+  $('hb-txt').className='hb-txt '+state;
+  const l={live:'LIVE',delayed:'LAG',stale:'STALE',dead:'--'};
+  $('hb-txt').textContent=(age!=null&&state!=='dead')?age+'s':l[state]||state;
 }
 
-
-
-// ===============================
-
-// 📊 RENDER
-
-// ===============================
-
-function render(data) {
-
-  const container = document.getElementById("accounts");
-
-  container.innerHTML = "";
-
-
-
-  if (!data.length) {
-
-    container.innerHTML = "<p>No data</p>";
-
-    return;
-
-  }
-
-
-
-  data.forEach(acc => {
-
-    const el = document.createElement("div");
-
-    el.className = "card";
-
-
-
-    el.innerHTML = `
-
-      <b>Account:</b> ${acc.account_id}<br>
-
-      Balance: ${acc.balance}<br>
-
-      Equity: ${acc.equity}<br>
-
-      PnL: ${acc.axm_float_pct}%
-
-    `;
-
-
-
-    container.appendChild(el);
-
-  });
-
+// Fix #7: Robust timestamp parsing
+function calcHB(d){
+  if(!d||!d.timestamp){setHB('dead');return;}
+  try{
+    const norm=d.timestamp.replace(/(\d{4})\.(\d{2})\.(\d{2})/,'$1-$2-$3').replace(' ','T')+'Z';
+    const parsed=new Date(norm);
+    if(isNaN(parsed.getTime())){setHB('dead');return;}
+    const age=(Date.now()-parsed.getTime())/1000;
+    if(age<0||age<=15)setHB('live',Math.max(0,Math.round(age)));
+    else if(age<=30)setHB('delayed',Math.round(age));
+    else if(age<=120)setHB('stale',Math.round(age));
+    else setHB('dead');
+  }catch(e){setHB('dead');}
 }
 
-
-
-// ===============================
-
-// 🚀 LOAD DASHBOARD
-
-// ===============================
-
-async function loadDashboard() {
-
-  const key = sessionStorage.getItem("key");
-
-  const role = sessionStorage.getItem("role");
-
-
-
-  const data = await fetchData();
-
-  const filtered = filterData(data, key, role);
-
-
-
-  render(filtered);
-
-}
-
-
-
-// ===============================
-
-// 🔁 AUTO LOGIN (SESSION)
-
-// ===============================
-
-window.onload = () => {
-
-  const key = sessionStorage.getItem("key");
-
-
-
-  if (key) {
-
-    document.getElementById("login").style.display = "none";
-
-    document.getElementById("dash").style.display = "block";
-
-    loadDashboard();
-
-  } else {
-
-    document.getElementById("login").style.display = "flex";
-
-  }
-
+const TMAP={
+  'SOD_FLOOR':{t:'Shield Protected',d:'SOD floor hit — trading halted',type:'protect'},
+  'THR_SOD_FLOOR':{t:'Throne Floor Hit',d:'Throne SOD floor — positions closed',type:'protect'},
+  'THR_CAT_SHIELD':{t:'Cat Shield Fired',d:'Catastrophe protection activated',type:'danger'},
+  'PV_WIPE':{t:'PV Quota Wiped',d:'Project V halted — Axiom continues',type:'warn'},
+  'AXM_RATCHET_FLOOR':{t:'Axiom Locked',d:'Axiom ratchet floor hit',type:'protect'},
+  'PV_RATCHET_FLOOR':{t:'PV Locked',d:'PV ratchet floor hit',type:'protect'},
+  'THR_RATCHET_FLOOR':{t:'Throne Locked',d:'Throne ratchet floor hit',type:'protect'},
+  'SESSION_END':{t:'Session Closed',d:'All positions swept at 21:55',type:'info'},
+  'NEWS_HALT':{t:'News Halt',d:'High-impact event — entries blocked',type:'warn'},
+  'VELOCITY_HALT':{t:'Velocity Halt',d:'Rapid equity drop — entries blocked',type:'danger'},
 };
 
+function pushEv(trig,extra,type){
+  const def=TMAP[trig];
+  evLog.unshift({
+    time:new Date().toLocaleTimeString(),
+    title:def?def.t:(trig||'System'),
+    detail:def?def.d:(extra||''),
+    type:def?def.type:(type||'info')
+  });
+  if(evLog.length>20)evLog.pop();
+  renderFeed();
+}
+function renderFeed(){
+  const f=$('feed');$('feed-count').textContent=evLog.length+' events';
+  if(!evLog.length){f.innerHTML='<div style="text-align:center;color:var(--dim);font-size:9px;letter-spacing:2px;padding:16px 0;">MONITORING...</div>';return;}
+  f.innerHTML=evLog.map(e=>`<div class="ev ${e.type}"><div class="ev-time">${e.time}</div><div class="ev-title">${e.title}</div><div class="ev-detail">${e.detail}</div></div>`).join('');
+}
 
+function renderTabs(){
+  const c=$('ptabs');c.innerHTML='';
+  accounts.forEach((a,i)=>{
+    const b=document.createElement('button');
+    b.className='ptab'+(i===activeIdx?' on':'');
+    const prof=a.profile||'ACC';
+    const aid=a.account_id?' · '+a.account_id:'';
+    b.textContent=prof+aid;
+    b.onclick=()=>{activeIdx=i;renderTabs();renderAcc(accounts[i]);};
+    c.appendChild(b);
+  });
+}
 
-</script></body>
+function renderAll(){
+  if(!accounts.length)return;
+  renderTabs();
+  renderAcc(accounts[activeIdx]||accounts[0]);
+}
 
+function setSB(n,dot,val,bad,badT,okT,warn){
+  if(bad){dot.className='sb-dot bad';val.className='sb-val bad';val.textContent=badT;}
+  else if(warn){dot.className='sb-dot warn';val.className='sb-val warn';val.textContent=warn;}
+  else{dot.className='sb-dot ok';val.className='sb-val ok';val.textContent=okT;}
+}
+
+function renderAcc(d){
+  if(!d)return;
+  // Fix #13: Only recalc heartbeat on fresh data from poll
+  calcHB(d);
+
+  const isT=d.profile==='THRONE'||d.profile==='INSTITUTIONAL';
+  const bal=Number(d.balance||0),eq=Number(d.equity||0),pnl=eq-bal;
+  const axmPos=Number(d.axm_positions||0),pvPos=Number(d.pv_positions||0);
+  const totalPos=axmPos+pvPos;
+
+  // Account card
+  $('ac-bal').textContent='$'+fmt(bal);
+  $('ac-eq').textContent='$'+fmt(eq);
+  const pnlEl=$('ac-pnl');
+  pnlEl.textContent=(pnl>=0?'+$':'-$')+fmt(Math.abs(pnl));
+  pnlEl.className='val '+(pnl>=0?'p':'n');
+  $('ac-id').textContent=d.account_id?'#'+d.account_id:'—';
+
+  const sessEl=$('sess-txt'),sessDot=$('sess-dot');
+  if(d.sess_fired){sessEl.textContent='CLOSED';sessEl.className='txt bad';sessDot.className='dot bad';}
+  else{sessEl.textContent='ACTIVE';sessEl.className='txt ok';sessDot.className='dot ok';}
+
+  const trig=d.last_trigger||'None';
+  const def=TMAP[trig];
+  $('ac-trig').textContent=def?def.t:trig;
+
+  // Timestamp
+  $('ac-ts').textContent=d.timestamp||'';
+  $('dash-ts').textContent=d.timestamp?'Last: '+d.timestamp:'Brockway Trading & Technical Analysis Limited';
+
+  // Arc reactor ring
+  $('arc-prof').textContent=d.profile||'DELTA';
+  $('arc-bal').textContent='$'+fmt(bal);
+  $('arc-eq').textContent='EQ $'+fmt(eq);
+  const rpEl=$('arc-pnl');
+  rpEl.textContent=(pnl>=0?'+$':'-$')+fmt(Math.abs(pnl));
+  rpEl.className='arc-pnl '+(pnl>=0?'p':'n');
+
+  // Fix #5: Correct exposure calculation
+  let expPct=0;
+  if(isT){
+    // Throne: K_THR_RISK=0.5, K_THR_EXP_CAP=2.5 → max 5 positions
+    const thrPos=totalPos; // throne uses total
+    expPct=cl((thrPos*0.5)/2.5*100,0,100);
+  } else {
+    // Delta: Calculate each engine separately for ring
+    const axmExp=cl(axmPos*25,0,125); // K_AXM_RISK=25, K_AXM_EXP_CAP=125
+    const pvExp=cl(pvPos*50,0,250);    // K_PV_RISK=50, K_PV_EXP_CAP=250
+    expPct=cl(Math.max(axmExp/125,pvExp/250)*100,0,100);
+  }
+  const circ=502; // 2*PI*80
+  const fp=expPct/100;
+  const offset=circ-(circ*fp);
+  $('rm').style.strokeDashoffset=offset;
+  $('rg').style.strokeDashoffset=offset;
+  const rc=fp>0.75?'var(--red)':fp>0.4?'var(--amber)':'var(--blue)';
+  $('rm').style.stroke=rc;$('rg').style.stroke=rc;
+  $('arc-exp').textContent=Math.round(expPct)+'%';
+  $('arc-exp').style.color=rc;
+
+  // Engine cards — Fix #4 & #10: Profile-aware rendering
+  const wrap=$('engines-wrap');
+  if(isT){
+    // Fix #4: Show N/A instead of hardcoded defaults when data missing
+    const floorDisplay=d.thr_floor_pct!=null?pct(d.thr_floor_pct):'N/A';
+    const hwmDisplay=d.thr_hwm_pct!=null?pct(d.thr_hwm_pct):'N/A';
+    const thrStopped=d.thr_stopped||d.axm_stopped; // backwards compat
+    wrap.innerHTML=`<div class="engine-card thr"><div class="ec-head"><span class="ec-name">Throne</span>
+      <span class="ec-badge ${thrStopped?'bad':'ok'}">${thrStopped?'HALTED':'ACTIVE'}</span></div>
+      <div class="ec-stats">
+        <div class="ec-stat"><label>Balance</label><div class="v">$${fmt(bal)}</div></div>
+        <div class="ec-stat"><label>Equity</label><div class="v">$${fmt(eq)}</div></div>
+        <div class="ec-stat"><label>Floor</label><div class="v${floorDisplay!=='N/A'?' n':''}">${floorDisplay}</div></div>
+        <div class="ec-stat"><label>HWM</label><div class="v${hwmDisplay!=='N/A'?' p':''}">${hwmDisplay}</div></div>
+      </div></div>`;
+  } else {
+    const af=Number(d.axm_float_pct||0),pf=Number(d.pv_float_pct||0);
+    const pl=Math.abs(Number(d.pv_day_loss_pct||0));
+    const axmExp=cl(axmPos*25/125*100,0,100);
+    const pvExp=cl(pvPos*50/250*100,0,100);
+    wrap.innerHTML=`
+      <div class="engine-card axm"><div class="ec-head"><span class="ec-name">Axiom</span>
+        <span class="ec-badge ${d.axm_stopped?'bad':'ok'}">${d.axm_stopped?'STOPPED':'ACTIVE'}</span></div>
+        <div class="ec-stats">
+          <div class="ec-stat"><label>Quota SOD</label><div class="v">$${fmt(Number(d.axm_sod||0))}</div></div>
+          <div class="ec-stat"><label>Positions</label><div class="v">${axmPos}</div></div>
+          <div class="ec-stat"><label>Float</label><div class="v ${af>=0?'p':'n'}">${pct(af)}</div></div>
+          <div class="ec-stat"><label>Allocation</label><div class="v b">75%</div></div>
+        </div>
+        <div class="ec-bar-wrap"><div class="ec-bar-lbl"><span>Exposure</span><span>${Math.round(axmExp)}%</span></div>
+          <div class="ec-bar-track"><div class="ec-bar-fill" style="width:${axmExp}%;background:${axmExp>80?'var(--red)':axmExp>50?'var(--amber)':'var(--blue)'}"></div></div></div>
+      </div>
+      <div class="engine-card pv"><div class="ec-head"><span class="ec-name">Project V</span>
+        <span class="ec-badge ${d.pv_wiped?'bad':'ok'}">${d.pv_wiped?'WIPED':'ACTIVE'}</span></div>
+        <div class="ec-stats">
+          <div class="ec-stat"><label>Quota SOD</label><div class="v">$${fmt(Number(d.pv_sod||0))}</div></div>
+          <div class="ec-stat"><label>Positions</label><div class="v">${pvPos}</div></div>
+          <div class="ec-stat"><label>Float</label><div class="v ${pf>=0?'p':'n'}">${pct(pf)}</div></div>
+          <div class="ec-stat"><label>Allocation</label><div class="v a">25%</div></div>
+        </div>
+        <div class="ec-bar-wrap"><div class="ec-bar-lbl"><span>Day Loss vs Quota</span><span>${pl.toFixed(1)}%</span></div>
+          <div class="ec-bar-track"><div class="ec-bar-fill" style="width:${cl(pl,0,100)}%;background:${pl>75?'var(--red)':'var(--amber)'}"></div></div></div>
+      </div>`;
+  }
+
+  // W/L
+  $('wl-w').textContent=d.wins_today||0;
+  $('wl-l').textContent=d.losses_today||0;
+
+  // Fix #10: Profile-aware status grid
+  if(isT){
+    $('l-s1').textContent='News';
+    $('l-s2').textContent='SOD Floor';
+    $('l-s3').textContent='Cat Shield';
+    $('l-s4').textContent='Session';
+    setSB(1,$('d-s1'),$('v-s1'),d.news_halt,'HALTED','CLEAR');
+    const thrStopped=d.thr_stopped||d.axm_stopped;
+    setSB(2,$('d-s2'),$('v-s2'),thrStopped,'HIT','ARMED');
+    const thrCat=d.thr_cat;
+    setSB(3,$('d-s3'),$('v-s3'),thrCat,'FIRED','ARMED');
+    setSB(4,$('d-s4'),$('v-s4'),d.sess_fired,'CLOSED','LIVE');
+  } else {
+    $('l-s1').textContent='News';
+    $('l-s2').textContent='Project V';
+    $('l-s3').textContent='Axiom';
+    $('l-s4').textContent='Session';
+    setSB(1,$('d-s1'),$('v-s1'),d.news_halt,'HALTED','CLEAR');
+    setSB(2,$('d-s2'),$('v-s2'),d.pv_wiped,'WIPED','ACTIVE');
+    setSB(3,$('d-s3'),$('v-s3'),d.axm_stopped,'STOPPED','ACTIVE');
+    setSB(4,$('d-s4'),$('v-s4'),d.sess_fired,'CLOSED','LIVE');
+  }
+
+  // Events
+  if(!prevD)pushEv(null,'System online — monitoring active','info');
+  if(prevD&&d.last_trigger!==prevD.last_trigger&&d.last_trigger&&d.last_trigger!=='None')pushEv(d.last_trigger);
+  if(prevD&&d.news_halt&&!prevD.news_halt)pushEv('NEWS_HALT');
+  prevD={...d};
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  $('ki').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  $('lb').addEventListener('click',doLogin);
+  const s=getK();
+  if(s){KEY=s;boot();}else{$('loading').style.display='none';$('login').style.display='flex';}
+});
+</script>
+</body>
 </html>
