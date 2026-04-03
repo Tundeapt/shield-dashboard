@@ -2,1417 +2,206 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Shield by Brockway — Institutional risk infrastructure for MT5. Terminal-level enforcement. Zero override.">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="shield-apple-touch-180.png">
-<title>SHIELD — Brockway Risk Infrastructure</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#050607">
+<link rel="icon" href="favicon.ico"><title>SHIELD — Command Terminal</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Libre+Franklin:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ================================================================
-   SHIELD — BROCKWAY RISK INFRASTRUCTURE
-   Nasdaq institutional authority + Bloomberg terminal DNA.
-   The page that closes.
-================================================================ */
-:root {
-  --bg:       #050607;
-  --surface:  #0A0B0D;
-  --panel:    #0E0F11;
-  --elevated: #131416;
-  --card:     #161719;
-  --border:   #1C1D20;
-  --border-h: #27282C;
-  --dim:      #363840;
-  --muted:    #50525A;
-  --sub:      #72747E;
-  --body:     #9497A3;
-  --text:     #B8BBC6;
-  --bright:   #D4D7E0;
-  --white:    #F0F1F5;
-
-  /* Institutional blue — Nasdaq trust signal */
-  --blue:     #0094FF;
-  --blue-hi:  #40AFFF;
-  --blue-30:  rgba(0,148,255,0.30);
-  --blue-20:  rgba(0,148,255,0.20);
-  --blue-10:  rgba(0,148,255,0.10);
-  --blue-05:  rgba(0,148,255,0.05);
-  --blue-03:  rgba(0,148,255,0.03);
-
-  /* Signal palette — surgical use only */
-  --green:    #00D26A;
-  --green-20: rgba(0,210,106,0.20);
-  --green-10: rgba(0,210,106,0.10);
-  --green-05: rgba(0,210,106,0.05);
-  --amber:    #FF9500;
-  --amber-20: rgba(255,149,0,0.20);
-  --amber-10: rgba(255,149,0,0.10);
-  --red:      #FF3B3B;
-  --red-20:   rgba(255,59,59,0.20);
-  --red-10:   rgba(255,59,59,0.10);
-  --cyan:     #00D4FF;
-
-  --mono:  'IBM Plex Mono', monospace;
-  --serif: 'Instrument Serif', Georgia, serif;
-  --sans:  'Libre Franklin', system-ui, sans-serif;
-}
-
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
-::selection { background: var(--blue-20); color: var(--white); }
-
-/* Scanline texture */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 6px);
-}
-
-/* ── NAV ── */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 1000;
-  height: 56px;
-  background: rgba(5,6,7,0.88);
-  backdrop-filter: blur(24px) saturate(1.3);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 48px;
-}
-
-.nav-left { display: flex; align-items: center; gap: 20px; }
-.nav-mark {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-.nav-logo {
-  width: 28px; height: 28px;
-  
-  border: 1px solid rgba(145,206,79,0.3);
-  object-fit: cover;
-  box-shadow: 0 0 12px rgba(145,206,79,0.15);
-}
-.nav-mark-text {
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--white);
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-.nav-sep { width: 1px; height: 18px; background: var(--border-h); }
-.nav-corp {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
-.nav-right { display: flex; align-items: center; gap: 32px; }
-.nav-link {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--sub);
-  text-decoration: none;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-.nav-link:hover { color: var(--white); }
-
-.nav-cta {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 8px 22px;
-  background: var(--blue);
-  color: var(--white);
-  text-decoration: none;
-  transition: all 0.25s;
-}
-.nav-cta:hover { background: var(--blue-hi); box-shadow: 0 0 24px var(--blue-20); }
-
-@media (max-width: 768px) {
-  .nav { padding: 0 20px; }
-  .nav-link, .nav-sep, .nav-corp { display: none; }
-}
-
-/* ── HERO ── */
-.hero {
-  position: relative;
-  min-height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 120px 0 60px;
-  overflow: hidden;
-}
-
-/* Shield HUD — 7-layer arc visualization */
-.shield-hud {
-  position: absolute;
-  top: 40%; right: -5%;
-  transform: translateY(-40%);
-  width: 500px; height: 500px;
-  opacity: 0;
-  animation: hudFadeIn 2s 0.5s ease forwards;
-  pointer-events: none;
-}
-@keyframes hudFadeIn { to { opacity: 1; } }
-.shield-hud svg { width: 100%; height: 100%; }
-.hud-arc {
-  fill: none;
-  stroke-linecap: round;
-  opacity: 0;
-}
-.hud-arc.a1 { stroke: var(--blue); stroke-width: 2; stroke-dasharray: 180 400; animation: arcSpin1 20s linear infinite, arcIn 1s 0.8s ease forwards; }
-.hud-arc.a2 { stroke: rgba(0,148,255,0.6); stroke-width: 1.5; stroke-dasharray: 120 400; animation: arcSpin2 25s linear infinite reverse, arcIn 1s 1.0s ease forwards; }
-.hud-arc.a3 { stroke: rgba(0,148,255,0.4); stroke-width: 1; stroke-dasharray: 90 400; animation: arcSpin3 30s linear infinite, arcIn 1s 1.2s ease forwards; }
-.hud-arc.a4 { stroke: rgba(0,210,106,0.3); stroke-width: 1; stroke-dasharray: 60 400; animation: arcSpin2 35s linear infinite reverse, arcIn 1s 1.4s ease forwards; }
-.hud-arc.a5 { stroke: rgba(0,148,255,0.2); stroke-width: 0.5; stroke-dasharray: 40 400; animation: arcSpin1 40s linear infinite, arcIn 1s 1.6s ease forwards; }
-.hud-ring { fill: none; stroke: rgba(0,148,255,0.06); stroke-width: 1; }
-.hud-ring-d { fill: none; stroke: rgba(0,148,255,0.04); stroke-width: 0.5; stroke-dasharray: 4 6; }
-.hud-center { fill: var(--blue); opacity: 0; animation: centerPulse 3s 1.5s ease-in-out infinite; }
-@keyframes arcIn { to { opacity: 1; } }
-@keyframes arcSpin1 { from { transform-origin: center; transform: rotate(0deg); } to { transform-origin: center; transform: rotate(360deg); } }
-@keyframes arcSpin2 { from { transform-origin: center; transform: rotate(0deg); } to { transform-origin: center; transform: rotate(360deg); } }
-@keyframes arcSpin3 { from { transform-origin: center; transform: rotate(0deg); } to { transform-origin: center; transform: rotate(360deg); } }
-@keyframes centerPulse { 0%,100% { opacity: 0.6; r: 3; } 50% { opacity: 1; r: 5; } }
-.hud-label {
-  font-family: var(--mono);
-  font-size: 7px;
-  fill: rgba(0,148,255,0.35);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-anchor: middle;
-}
-@media(max-width:768px) {
-  .hero { padding: 100px 0 40px; }
-  .shield-hud { width: 300px; height: 300px; right: -20%; top: 50%; }
-  .hud-label { font-size: 5px; }
-}
-
-/* Cinematic gradient field */
-.hero-field {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(0,148,255,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,148,255,0.04) 0%, transparent 50%);
-}
-
-/* Grid overlay */
-.hero-grid-bg {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,148,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,148,255,0.03) 1px, transparent 1px);
-  background-size: 100px 100px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%);
-}
-
-/* Datum line */
-.hero-datum {
-  position: absolute;
-  left: 0; right: 0;
-  top: 52%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--blue-20) 25%, var(--blue) 50%, var(--blue-20) 75%, transparent);
-  opacity: 0;
-  animation: datumIn 2s 1s ease forwards;
-}
-@keyframes datumIn { to { opacity: 0.6; } }
-
-
-
-/* Hero content */
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 48px;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.hero-kicker {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--blue);
-  margin-bottom: 36px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.5s ease forwards;
-}
-.hero-kicker::before {
-  content: '';
-  width: 32px; height: 2px;
-  background: var(--blue);
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hero-h1 {
-  font-family: var(--sans);
-  font-weight: 900;
-  font-size: clamp(48px, 8vw, 120px);
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-  color: var(--white);
-  margin-bottom: 20px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.6s ease forwards;
-}
-.hero-h1 .serif {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-style: italic;
-  color: var(--blue);
-  letter-spacing: -0.01em;
-}
-
-.hero-h1-sub {
-  font-family: var(--sans);
-  font-weight: 200;
-  font-size: clamp(22px, 3.5vw, 52px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--sub);
-  margin-bottom: 48px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.7s ease forwards;
-}
-
-.hero-body {
-  max-width: 580px;
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--body);
-  font-weight: 300;
-  margin-bottom: 44px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.8s ease forwards;
-}
-.hero-body strong { color: var(--white); font-weight: 500; }
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.9s ease forwards;
-}
-
-.btn-main {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 40px;
-  background: var(--blue);
-  color: var(--white);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-.btn-main::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.5s;
-}
-.btn-main:hover::after { transform: translateX(100%); }
-.btn-main:hover {
-  background: var(--blue-hi);
-  box-shadow: 0 4px 40px var(--blue-20);
-  transform: translateY(-1px);
-}
-
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  padding: 16px 40px;
-  border: 1px solid var(--border-h);
-  color: var(--sub);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-.btn-ghost:hover { border-color: var(--blue-20); color: var(--blue); }
-
-/* Hero bottom strip — live system data */
-.hero-strip {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  border-top: 1px solid var(--border);
-  background: rgba(5,6,7,0.6);
-  backdrop-filter: blur(12px);
-  opacity: 0;
-  animation: fadeUp 0.8s 1.1s ease forwards;
-}
-.hs-cell {
-  padding: 20px 32px;
-  border-right: 1px solid var(--border);
-  transition: background 0.3s;
-}
-.hs-cell:last-child { border-right: none; }
-.hs-cell:hover { background: var(--blue-03); }
-.hs-label {
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.hs-val {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--white);
-  letter-spacing: -0.5px;
-}
-.hs-val .u { font-size: 11px; font-weight: 300; color: var(--muted); margin-left: 3px; }
-.hs-val .sig { color: var(--blue); }
-.hs-val .grn { color: var(--green); }
-
-@media (max-width: 1100px) {
-  .hero-strip { grid-template-columns: repeat(3, 1fr); }
-  .hs-cell:nth-child(n+4) { display: none; }
-}
-@media (max-width: 640px) {
-  .hero-strip { grid-template-columns: repeat(2, 1fr); }
-  .hs-cell:nth-child(n+3) { display: none; }
-  .hero-content { padding: 0 20px; }
-
-}
-
-/* ── INSTITUTIONAL STATEMENT (Nasdaq-style) ── */
-.statement {
-  padding: 140px 48px;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-}
-.statement::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 50% 60% at 50% 40%, var(--blue-05), transparent);
-}
-.st-inner {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.st-tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--blue);
-  margin-bottom: 32px;
-}
-.st-headline {
-  font-family: var(--serif);
-  font-size: clamp(32px, 5vw, 64px);
-  line-height: 1.1;
-  color: var(--white);
-  margin-bottom: 24px;
-  letter-spacing: -0.01em;
-}
-.st-headline em { color: var(--blue); font-style: italic; }
-.st-body {
-  font-size: 17px;
-  line-height: 1.85;
-  color: var(--body);
-  font-weight: 300;
-  max-width: 640px;
-  margin: 0 auto;
-}
-.st-body strong { color: var(--white); font-weight: 500; }
-
-@media (max-width: 768px) { .statement { padding: 80px 20px; } }
-
-/* ── SECTION DIVIDER ── */
-.divider {
-  height: 1px;
-  background: var(--border);
-  position: relative;
-}
-.divider::after {
-  content: '';
-  position: absolute;
-  left: 50%; top: -1px;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 3px;
-  background: var(--blue);
-  opacity: 0.4;
-}
-
-/* ── PROBLEM / RESPONSE — SPLIT PANEL ── */
-.split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 600px;
-}
-@media (max-width: 960px) { .split { grid-template-columns: 1fr; } }
-
-.split-panel {
-  padding: 64px 56px;
-  position: relative;
-}
-.split-panel.left { border-right: 1px solid var(--border); }
-
-.sp-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  padding: 4px 14px;
-  margin-bottom: 32px;
-  border: 1px solid;
-}
-.sp-tag.red { color: var(--red); border-color: var(--red-20); background: var(--red-10); }
-.sp-tag.blue { color: var(--blue); border-color: var(--blue-20); background: var(--blue-05); }
-.sp-tag.green { color: var(--green); border-color: var(--green-20); background: var(--green-05); }
-.sp-tag.amber { color: var(--amber); border-color: var(--amber-20); background: var(--amber-10); }
-
-.sp-headline {
-  font-family: var(--serif);
-  font-size: clamp(28px, 3.5vw, 44px);
-  color: var(--white);
-  line-height: 1.12;
-  margin-bottom: 20px;
-}
-.sp-headline em { font-style: italic; }
-.sp-headline em.red { color: var(--red); }
-.sp-headline em.blue { color: var(--blue); }
-.sp-headline em.green { color: var(--green); }
-.sp-headline em.amber { color: var(--amber); }
-
-.sp-body {
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--body);
-  font-weight: 300;
-  margin-bottom: 28px;
-}
-
-/* Failure table */
-.fail-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 10px;
-}
-.fail-table th {
-  text-align: left;
-  font-weight: 600;
-  color: var(--blue);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 10px 12px;
-  border-bottom: 2px solid var(--blue-20);
-  font-size: 8px;
-}
-.fail-table td {
-  padding: 12px 12px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-.fail-table tr:hover td { background: var(--red-10); }
-.ft-id { color: var(--dim); width: 40px; }
-.ft-mode { color: var(--red); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-.ft-desc { color: var(--sub); font-family: var(--sans); line-height: 1.5; }
-.ft-sev { width: 70px; }
-.sev-bar { display: inline-block; height: 3px; background: var(--red); }
-
-/* Response card */
-.response-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-.rc-header {
-  padding: 10px 20px;
-  background: var(--elevated);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.rc-title {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--green);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-.rc-live {
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--green);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.rc-live::before {
-  content: '';
-  width: 4px; height: 4px;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: blink 2s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-.rc-body { padding: 28px; }
-
-.rc-hed {
-  font-family: var(--serif);
-  font-size: 30px;
-  color: var(--white);
-  line-height: 1.15;
-  margin-bottom: 16px;
-}
-.rc-hed em { color: var(--green); font-style: italic; }
-
-.rc-text {
-  font-size: 13px;
-  line-height: 1.85;
-  color: var(--body);
-  margin-bottom: 28px;
-}
-
-.spec-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  margin-bottom: 28px;
-}
-.spec-cell {
-  background: var(--panel);
-  padding: 16px 18px;
-}
-.spec-k {
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.spec-v {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--green);
-}
-.spec-v.red { color: var(--red); }
-
-/* ── ARCHITECTURE ── */
-.arch {
-  padding: 120px 0 0;
-  background: var(--surface);
-}
-.arch-top {
-  padding: 0 48px 60px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* Layer data grid */
-.layer-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 10px;
-}
-.layer-table thead th {
-  text-align: left;
-  font-weight: 600;
-  color: var(--blue);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 12px 24px;
-  border-bottom: 2px solid var(--blue-20);
-  border-top: 1px solid var(--border);
-  font-size: 8px;
-  background: var(--elevated);
-}
-.layer-table thead th:last-child { text-align: right; }
-.layer-table tbody td {
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border);
-}
-.layer-table tbody tr { transition: background 0.15s; cursor: default; }
-.layer-table tbody tr:hover { background: var(--blue-03); }
-.lt-num { color: var(--dim); width: 60px; }
-.lt-name { color: var(--white); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; width: 200px; }
-.lt-desc { color: var(--sub); font-family: var(--sans); line-height: 1.6; font-size: 12px; }
-.lt-status {
-  text-align: right;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  width: 130px;
-}
-.lt-status.green { color: var(--green); }
-.lt-status.amber { color: var(--amber); }
-.lt-status.blue { color: var(--blue); }
-
-/* ── PROFILES ── */
-.profiles {
-  padding: 120px 0 0;
-}
-.profiles-top {
-  padding: 0 48px 60px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-.profiles-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  max-width: 640px;
-}
-@media (max-width: 900px) { .profiles-grid { grid-template-columns: 1fr; } }
-
-.p-card {
-  border-top: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-}
-.p-card:last-child { border-right: none; }
-
-.pc-header {
-  padding: 10px 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.pc-header.inst { background: var(--green-05); }
-.pc-name {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-.pc-header.inst .pc-name { color: var(--green); }
-.pc-tier {
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--muted);
-  letter-spacing: 2px;
-}
-
-.pc-body { padding: 28px 24px; }
-
-.pc-tagline {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 19px;
-  color: var(--body);
-  margin-bottom: 6px;
-}
-.pc-for {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 32px;
-}
-
-.pc-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 10px;
-  margin-bottom: 28px;
-}
-.pc-table td {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-}
-.pc-table td:first-child { color: var(--sub); letter-spacing: 1px; text-transform: uppercase; }
-.pc-table td:last-child { text-align: right; font-weight: 600; }
-.p-card:first-child .pc-table td:last-child { color: var(--green); }
-.p-card:last-child .pc-table td:last-child { color: var(--amber); }
-
-.pc-toggles-label {
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.pc-toggle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  margin-bottom: 4px;
-  background: var(--surface);
-  font-size: 11px;
-}
-.pct-name { color: var(--text); }
-.pct-name small { display: block; font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 2px; }
-.pct-state {
-  font-family: var(--mono);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border: 1px solid;
-}
-.pct-state.on { color: var(--green); border-color: var(--green-20); background: var(--green-05); }
-.pct-state.off { color: var(--dim); border-color: var(--border); }
-.pct-state.user { color: var(--amber); border-color: var(--amber-20); background: var(--amber-10); }
-
-.pc-price {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.pc-price-val {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 44px;
-  color: var(--white);
-  letter-spacing: -1px;
-}
-.pc-price-per {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.pc-cta {
-  display: block;
-  text-align: center;
-  padding: 14px 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: all 0.25s;
-  cursor: pointer;
-}
-.p-card:first-child .pc-cta { background: var(--green); color: var(--bg); }
-.p-card:first-child .pc-cta:hover { background: #33FF99; box-shadow: 0 0 20px var(--green-20); }
-.p-card:last-child .pc-cta { border: 1px solid var(--amber); color: var(--amber); background: transparent; }
-.p-card:last-child .pc-cta:hover { background: var(--amber); color: var(--bg); }
-
-/* ── DEPLOY ── */
-.deploy {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-@media (max-width: 900px) { .deploy { grid-template-columns: 1fr; } }
-
-.deploy-panel { padding: 64px 48px; }
-.deploy-panel.left { border-right: 1px solid var(--border); }
-
-.steps { counter-reset: step; }
-.step {
-  counter-increment: step;
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 0;
-  border-top: 1px solid var(--border);
-  padding: 20px 0;
-}
-.step:last-child { border-bottom: 1px solid var(--border); }
-.step-n {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 28px;
-  color: var(--border-h);
-  line-height: 1;
-}
-.step-n::before { content: counter(step, decimal-leading-zero); }
-.step-inner { padding-left: 20px; border-left: 1px solid var(--border); }
-.step-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--blue);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.step-desc {
-  font-size: 12px;
-  color: var(--sub);
-  line-height: 1.65;
-}
-.step-desc code {
-  font-family: var(--mono);
-  font-size: 10px;
-  background: var(--blue-05);
-  color: var(--blue);
-  padding: 1px 5px;
-  border: 1px solid var(--blue-10);
-}
-
-/* Alert feed */
-.af-item {
-  display: grid;
-  grid-template-columns: 3px 1fr;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-}
-.af-item:first-child { border-top: 1px solid var(--border); }
-.af-bar { width: 2px; margin-top: 3px; }
-.af-item.g .af-bar { background: var(--green); }
-.af-item.a .af-bar { background: var(--amber); }
-.af-item.r .af-bar { background: var(--red); }
-.af-item.c .af-bar { background: var(--cyan); }
-.af-name {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-.af-item.g .af-name { color: var(--green); }
-.af-item.a .af-name { color: var(--amber); }
-.af-item.r .af-name { color: var(--red); }
-.af-item.c .af-name { color: var(--cyan); }
-.af-text { font-size: 10px; color: var(--sub); line-height: 1.5; font-family: var(--mono); }
-
-.deploy-note {
-  margin-top: 28px;
-  padding: 14px 18px;
-  border-left: 2px solid var(--blue-20);
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  line-height: 1.7;
-}
-.deploy-note strong { color: var(--blue); }
-
-/* ── FINAL CTA ── */
-.final-cta {
-  padding: 140px 48px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.final-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 40% 50% at 50% 50%, var(--blue-05), transparent);
-  pointer-events: none;
-}
-.fc-inner { position: relative; z-index: 1; }
-
-.fc-tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--blue);
-  margin-bottom: 28px;
-}
-
-.fc-hed {
-  font-family: var(--sans);
-  font-weight: 900;
-  font-size: clamp(36px, 6vw, 80px);
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-  color: var(--white);
-  margin-bottom: 20px;
-}
-.fc-hed .serif {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-style: italic;
-  color: var(--blue);
-}
-
-.fc-sub {
-  font-size: 16px;
-  color: var(--sub);
-  max-width: 520px;
-  margin: 0 auto 44px;
-  line-height: 1.75;
-  font-weight: 300;
-}
-
-.fc-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 56px;
-  background: var(--blue);
-  color: var(--white);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-.fc-btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.5s;
-}
-.fc-btn:hover::after { transform: translateX(100%); }
-.fc-btn:hover {
-  background: var(--blue-hi);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 60px var(--blue-20);
-}
-
-.fc-proof {
-  margin-top: 28px;
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.fc-proof::before {
-  content: '';
-  width: 5px; height: 5px;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: blink 2s infinite;
-}
-
-/* ── FOOTER ── */
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 32px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.footer-left {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 1px;
-}
-.footer-right { display: flex; gap: 24px; }
-.footer-link {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted);
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: color 0.2s;
-}
-.footer-link:hover { color: var(--blue); }
-
-@media (max-width: 768px) {
-  .footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
-  .footer-link { margin: 0 8px; }
-  .split-panel { padding: 40px 20px; }
-  .arch-top, .profiles-top { padding-left: 20px; padding-right: 20px; }
-  .deploy-panel { padding: 40px 20px; }
-  .final-cta { padding: 80px 20px; }
-}
-
-/* ── SCROLL REVEAL ── */
-.rv {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.rv.vis {
-  opacity: 1;
-  transform: translateY(0);
-}
+:root{--bg:#050607;--sf:#0A0B0D;--pn:#0E0F11;--bd:#1C1D20;--dm:#363840;--mt:#50525A;--sb:#72747E;--tx:#B8BBC6;--wh:#F0F1F5;--bl:#0094FF;--bh:#40AFFF;--gn:#00D26A;--am:#FF9500;--rd:#FF3B3B;--m:'JetBrains Mono',monospace;--s:'Libre Franklin',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}html,body{background:var(--bg);color:var(--tx);font-family:var(--m);overflow-x:hidden}
+#ld{position:fixed;inset:0;z-index:998;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
+.lr{width:64px;height:64px;position:relative}.lr::before,.lr::after{content:'';position:absolute;inset:0;border-radius:50%}.lr::before{border:1px solid rgba(0,148,255,.1);border-top:1px solid var(--bl);animation:sp 1s linear infinite}.lr::after{inset:8px;border:1px solid rgba(0,148,255,.05);border-bottom:1px solid var(--bh);animation:sp 1.5s linear infinite reverse}
+@keyframes sp{to{transform:rotate(360deg)}}.lt{font-size:9px;color:var(--bl);letter-spacing:6px;animation:lp 1.5s infinite}@keyframes lp{0%,100%{opacity:1}50%{opacity:.2}}
+#lg{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+.lb{width:100%;max-width:400px;background:var(--sf);border:1px solid var(--bd);padding:40px 28px}.lh{display:flex;align-items:center;gap:12px;margin-bottom:36px}.li{width:8px;height:8px;background:var(--bl)}.ln{font-family:var(--s);font-size:18px;font-weight:800;color:var(--wh);letter-spacing:3px}.ll{font-size:8px;color:var(--bl);letter-spacing:4px;display:block;margin-bottom:10px}
+.lp{width:100%;background:transparent;border:none;border-bottom:1px solid var(--bd);color:var(--wh);font-family:var(--m);font-size:16px;padding:12px 0;outline:none;letter-spacing:3px;caret-color:var(--bl)}.lp:focus{border-color:var(--bl)}
+.lb-btn{width:100%;margin-top:28px;padding:12px;background:var(--bl);color:var(--wh);border:none;font-family:var(--m);font-weight:600;font-size:10px;letter-spacing:4px;cursor:pointer}.lb-btn:hover{background:var(--bh)}
+.le{margin-top:10px;font-size:9px;color:var(--rd);text-align:center;min-height:14px}
+#da{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:2}
+.tb{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--bd);background:rgba(5,6,7,.9);position:sticky;top:0;z-index:50}
+.tbl{display:flex;align-items:center;gap:10px}.tbi{width:7px;height:7px;background:var(--bl);box-shadow:0 0 10px rgba(0,148,255,.3)}.tbn{font-family:var(--s);font-size:14px;font-weight:800;color:var(--wh);letter-spacing:3px}
+.hb{display:flex;align-items:center;gap:5px}.hbd{width:5px;height:5px;border-radius:50%}.hbd.lv{background:var(--gn);box-shadow:0 0 6px var(--gn);animation:hp 1.5s infinite}.hbd.dl{background:var(--am)}.hbd.st{background:var(--rd)}.hbd.dd{background:var(--dm)}
+@keyframes hp{0%,100%{opacity:1}50%{opacity:.3}}.hbt{font-size:8px;letter-spacing:1px}.hbt.lv{color:var(--gn)}.hbt.dl{color:var(--am)}.hbt.st{color:var(--rd)}.hbt.dd{color:var(--dm)}
+.dc{background:none;border:1px solid rgba(255,59,59,.3);color:rgba(255,59,59,.6);font-family:var(--m);font-size:7px;letter-spacing:2px;padding:4px 8px;cursor:pointer}
+.eb{display:none;padding:8px 16px;background:rgba(255,59,59,.05);border-bottom:1px solid rgba(255,59,59,.1);font-size:9px;color:var(--rd);text-align:center}
+.pt{display:flex;overflow-x:auto;border-bottom:1px solid var(--bd);background:var(--sf)}.pt::-webkit-scrollbar{display:none}.pb{flex-shrink:0;padding:10px 20px;font-size:9px;letter-spacing:2px;color:var(--sb);border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer}.pb.on{color:var(--bl);border-bottom-color:var(--bl)}
+.mn{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;max-width:860px;width:100%;margin:0 auto}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px}.stt{font-size:8px;font-weight:600;color:var(--bl);letter-spacing:4px}
+.cd{background:var(--sf);border:1px solid var(--bd);position:relative;overflow:hidden}.cd::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,148,255,.2),transparent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd)}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--bd)}
+.gc{background:var(--sf);padding:14px 16px}.gc label{display:block;font-size:7px;color:var(--mt);letter-spacing:2px;margin-bottom:6px}.gc .v{font-family:var(--s);font-size:20px;font-weight:700;color:var(--wh);letter-spacing:-.5px}
+.gc .v.sm{font-size:14px;font-family:var(--m)}.gc .v.xs{font-size:11px;font-family:var(--m)}.gc .v.p{color:var(--gn)}.gc .v.n{color:var(--rd)}.gc .v.b{color:var(--bl)}.gc .v.a{color:var(--am)}
+.bl{display:flex;justify-content:space-between;font-size:7px;color:var(--mt);margin-bottom:4px;letter-spacing:1px}.bt{height:3px;background:rgba(255,255,255,.04);overflow:hidden;border-radius:1px}.bf{height:100%;border-radius:1px;transition:width .8s,background .5s}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd)}.sb{background:var(--sf);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.sd{width:4px;height:4px;border-radius:50%;flex-shrink:0}.sd.ok{background:var(--gn);box-shadow:0 0 4px var(--gn)}.sd.bd{background:var(--rd);box-shadow:0 0 4px var(--rd)}
+.sl{font-size:7px;color:var(--mt);letter-spacing:1px;display:block;margin-bottom:2px}.sv{font-size:9px;font-weight:600;letter-spacing:1px}.sv.ok{color:var(--gn)}.sv.bd{color:var(--rd)}
+.fc{padding:14px 16px}.fh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.ft{font-size:8px;font-weight:600;color:var(--bl);letter-spacing:4px}.fn{font-size:7px;color:var(--dm)}
+.fd{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto}.fd::-webkit-scrollbar{width:2px}.fd::-webkit-scrollbar-thumb{background:var(--bl)}
+.ev{padding:8px 10px;border-left:2px solid}.ev.i{border-color:rgba(0,148,255,.2);background:var(--pn)}.ev.p{border-color:var(--gn);background:rgba(0,210,106,.02)}.ev.w{border-color:var(--am);background:rgba(255,149,0,.03)}.ev.d{border-color:var(--rd);background:rgba(255,59,59,.03)}
+.evt{font-size:7px;color:var(--dm);margin-bottom:2px}.evn{font-size:8px;font-weight:600;letter-spacing:1px;margin-bottom:1px}.ev.i .evn{color:var(--bl)}.ev.p .evn{color:var(--gn)}.ev.w .evn{color:var(--am)}.ev.d .evn{color:var(--rd)}.evd{font-size:8px;color:var(--sb)}
+.df{padding:14px 16px;text-align:center;font-size:8px;color:var(--dm);border-top:1px solid var(--bd);margin-top:6px}
+.ne{padding:40px 16px;text-align:center;font-size:10px;color:var(--mt);letter-spacing:3px;line-height:2;border-bottom:1px solid var(--bd)}
+@media(min-width:768px){.mn{padding:20px;gap:14px}.sg{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-left">
-    <a href="https://paystack.com/buy/shield-brockway" class="nav-mark">
-      <img class="nav-logo" src="shield-logomark.svg?v=3" alt="Shield Logo">
-      <span class="nav-mark-text">Shield</span>
-    </a>
-    <div class="nav-sep"></div>
-    <span class="nav-corp">Brockway Trading & Technical Analysis Ltd</span>
-  </div>
-  <div class="nav-right">
-    <a href="#architecture" class="nav-link">Architecture</a>
-    <a href="#profiles" class="nav-link">Profiles</a>
-    <a href="#deploy" class="nav-link">Deploy</a>
-    <a href="https://paystack.com/buy/shield-brockway" class="nav-cta">Get Shield</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-field"></div>
-  <div class="hero-grid-bg"></div>
-  <div class="hero-datum"></div>
-
-
-
-
-  <!-- Shield HUD Visualization -->
-  <div class="shield-hud">
-    <svg viewBox="0 0 600 600">
-      <!-- Static rings -->
-      <circle class="hud-ring" cx="300" cy="300" r="280"/>
-      <circle class="hud-ring-d" cx="300" cy="300" r="240"/>
-      <circle class="hud-ring" cx="300" cy="300" r="200"/>
-      <circle class="hud-ring-d" cx="300" cy="300" r="160"/>
-      <circle class="hud-ring" cx="300" cy="300" r="120"/>
-      <circle class="hud-ring-d" cx="300" cy="300" r="80"/>
-      <circle class="hud-ring" cx="300" cy="300" r="40"/>
-      <!-- Rotating arcs — 7 protection layers -->
-      <circle class="hud-arc a1" cx="300" cy="300" r="275"/>
-      <circle class="hud-arc a2" cx="300" cy="300" r="235"/>
-      <circle class="hud-arc a3" cx="300" cy="300" r="195"/>
-      <circle class="hud-arc a1" cx="300" cy="300" r="155"/>
-      <circle class="hud-arc a4" cx="300" cy="300" r="115"/>
-      <circle class="hud-arc a5" cx="300" cy="300" r="85"/>
-      <circle class="hud-arc a2" cx="300" cy="300" r="45"/>
-      <!-- Layer labels -->
-      <text class="hud-label" x="300" y="18">SOD Floor</text>
-      <text class="hud-label" x="300" y="55">Ratchet</text>
-      <text class="hud-label" x="300" y="95">Trail Floor</text>
-      <text class="hud-label" x="300" y="138">Heat Cap</text>
-      <text class="hud-label" x="540" y="300">Session</text>
-      <text class="hud-label" x="60" y="300">News</text>
-      <text class="hud-label" x="300" y="585">Velocity</text>
-      <!-- Center dot -->
-      <circle class="hud-center" cx="300" cy="300" r="3"/>
-      <!-- Cross hairs -->
-      <line x1="300" y1="295" x2="300" y2="270" stroke="rgba(0,148,255,0.15)" stroke-width="0.5"/>
-      <line x1="300" y1="305" x2="300" y2="330" stroke="rgba(0,148,255,0.15)" stroke-width="0.5"/>
-      <line x1="295" y1="300" x2="270" y2="300" stroke="rgba(0,148,255,0.15)" stroke-width="0.5"/>
-      <line x1="305" y1="300" x2="330" y2="300" stroke="rgba(0,148,255,0.15)" stroke-width="0.5"/>
-    </svg>
-  </div>
-
-  <div class="hero-content">
-    <div class="hero-kicker">Institutional Risk Infrastructure</div>
-    <h1 class="hero-h1">You don't blow accounts<br>from bad <span class="serif">trades.</span></h1>
-    <p class="hero-h1-sub">You blow them when nothing stops you.</p>
-    <p class="hero-body">
-      Shield is a terminal-level risk governor for MT5.
-      It enforces your limits when discipline fails.
-      <strong>No override. No negotiation.</strong>
-      One prevented mistake pays for this.
-    </p>
-    <div class="hero-actions">
-      <a href="https://paystack.com/buy/shield-brockway" class="btn-main">Deploy Shield &mdash; $99/month <span>&rarr;</span></a>
-      <a href="#architecture" class="btn-ghost">View Architecture</a>
+<div id="ld"><div class="lr"></div><div class="lt">Initializing</div></div>
+<div id="lg"><div class="lb"><div class="lh"><div class="li"></div><div class="ln">SHIELD</div></div><label class="ll">Authorization Key</label><input class="lp" id="ki" type="password" placeholder="Enter key" autocomplete="off"><button class="lb-btn" id="kb">Initialize</button><div class="le" id="ke"></div></div></div>
+<div id="da">
+  <div class="tb"><div class="tbl"><div class="tbi"></div><div class="tbn">Shield</div></div><div style="display:flex;align-items:center;gap:12px"><div class="hb"><div class="hbd dd" id="hd"></div><div class="hbt dd" id="ht">--</div></div><button class="dc" onclick="so()">Exit</button></div></div>
+  <div class="eb" id="eb">Connection lost</div>
+  <div class="pt" id="pt"></div>
+  <div class="mn">
+    <!-- EQUITY -->
+    <div><div class="sh"><div class="stt">Account Equity</div><div style="font-size:8px;color:var(--dm)" id="ts"></div></div>
+    <div class="cd"><div class="g2">
+      <div class="gc"><label>Equity</label><div class="v" id="eq">—</div></div>
+      <div class="gc"><label>Balance</label><div class="v" id="bl">—</div></div>
+      <div class="gc"><label>Floating P&L</label><div class="v" id="fl">—</div></div>
+      <div class="gc"><label>Account</label><div class="v sm" id="ai">—</div></div>
+    </div></div></div>
+    <!-- RISK METRICS -->
+    <div><div class="sh"><div class="stt">Risk Telemetry</div></div>
+    <div class="cd"><div class="g3">
+      <div class="gc"><label>Daily Exp. Risk (DER)</label><div class="v sm a" id="der">—</div></div>
+      <div class="gc"><label>Open Heat (OER)</label><div class="v sm" id="oer">—</div></div>
+      <div class="gc"><label>Max Drawdown (MDD)</label><div class="v sm n" id="mdd">—</div></div>
+    </div><div class="g3">
+      <div class="gc"><label>HWM</label><div class="v sm p" id="hwm">—</div></div>
+      <div class="gc"><label>Floor</label><div class="v sm n" id="flr">—</div></div>
+      <div class="gc"><label>Dist. to Floor</label><div class="v sm" id="dtf">—</div></div>
     </div>
+    <div style="padding:10px 16px"><div class="bl"><span>Equity Drawdown</span><span id="dbv">—</span></div><div class="bt"><div class="bf" id="dbf" style="width:0%;background:var(--gn)"></div></div></div>
+    </div></div>
+    <!-- PERFORMANCE -->
+    <div><div class="sh"><div class="stt">Performance</div></div>
+    <div class="cd"><div class="g2" style="border-bottom:1px solid var(--bd)">
+      <div class="gc" style="text-align:center"><div class="v p" style="font-size:28px;font-weight:800" id="wn">0</div><div style="font-size:7px;color:var(--mt);letter-spacing:2px;margin-top:4px">Wins</div></div>
+      <div class="gc" style="text-align:center"><div class="v n" style="font-size:28px;font-weight:800" id="ls">0</div><div style="font-size:7px;color:var(--mt);letter-spacing:2px;margin-top:4px">Losses</div></div>
+    </div><div class="g3">
+      <div class="gc"><label>Win Rate</label><div class="v xs" id="wr">—</div></div>
+      <div class="gc"><label>Profit Factor</label><div class="v xs" id="pf">—</div></div>
+      <div class="gc"><label>Session</label><div class="v xs b" id="sc">#1</div></div>
+    </div></div></div>
+    <!-- SYSTEM -->
+    <div><div class="sh"><div class="stt">System Health</div></div>
+    <div class="cd"><div class="sg">
+      <div class="sb"><div class="sd ok" id="s1d"></div><div><span class="sl">News</span><div class="sv ok" id="s1v">CLEAR</div></div></div>
+      <div class="sb"><div class="sd ok" id="s2d"></div><div><span class="sl">Velocity</span><div class="sv ok" id="s2v">SAFE</div></div></div>
+      <div class="sb"><div class="sd ok" id="s3d"></div><div><span class="sl">Floor</span><div class="sv ok" id="s3v">ARMED</div></div></div>
+      <div class="sb"><div class="sd ok" id="s4d"></div><div><span class="sl">Latency</span><div class="sv ok" id="s4v">—</div></div></div>
+    </div></div></div>
+    <!-- FEED -->
+    <div class="cd fc"><div class="fh"><div class="ft">Event Feed</div><div class="fn" id="ec">0</div></div><div class="fd" id="fe"><div style="text-align:center;color:var(--dm);font-size:9px;letter-spacing:2px;padding:16px 0">MONITORING...</div></div></div>
+    <div class="df" id="df">Brockway Trading &amp; Technical Analysis Limited</div>
   </div>
-
-  <div class="hero-strip" style="margin-top:40px;">
-    <div class="hs-cell">
-      <div class="hs-label">Enforcement</div>
-      <div class="hs-val"><span class="sig">Terminal</span><span class="u">level</span></div>
-    </div>
-    <div class="hs-cell">
-      <div class="hs-label">Override</div>
-      <div class="hs-val">Zero</div>
-    </div>
-    <div class="hs-cell">
-      <div class="hs-label">Session Close</div>
-      <div class="hs-val">21:55<span class="u">UTC</span></div>
-    </div>
-    <div class="hs-cell">
-      <div class="hs-label">Uptime</div>
-      <div class="hs-val"><span class="grn">99.97</span><span class="u">%</span></div>
-    </div>
-    <div class="hs-cell">
-      <div class="hs-label">Version</div>
-      <div class="hs-val">2.0<span class="u">stable</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- STATEMENT -->
-<div class="divider"></div>
-<section class="statement rv">
-  <div class="st-inner">
-    <div class="st-tag">The Problem</div>
-    <h2 class="st-headline">The trade that blows your account is not the first loss.<br><em>It's the one you take after.</em></h2>
-    <p class="st-body">
-      MT5 will execute both trades. The first loss and the revenge trade after it.
-      It doesn't know your daily limit. It doesn't care about your prop firm's rules.
-      It does exactly what you tell it — especially when you shouldn't be trading.
-      <strong>Shield won't.</strong>
-    </p>
-  </div>
-</section>
-<div class="divider"></div>
-
-<!-- PROBLEM / RESPONSE -->
-<section class="split rv">
-  <div class="split-panel left">
-    <div class="sp-tag red">Failure Analysis</div>
-    <h2 class="sp-headline">
-      Four failure modes<br>destroy <em class="red">funded accounts.</em>
-    </h2>
-    <p class="sp-body">
-      Every prop firm breach traces back to one of these. None are strategy failures. All are enforcement failures that MT5 cannot prevent.
-    </p>
-    <table class="fail-table">
-      <thead><tr><th>ID</th><th>Mode</th><th>Description</th><th>Sev</th></tr></thead>
-      <tbody>
-        <tr><td class="ft-id">001</td><td class="ft-mode">Session Overrun</td><td class="ft-desc">Positions held past risk window. Overnight gaps compound loss.</td><td class="ft-sev"><span class="sev-bar" style="width:90%"></span></td></tr>
-        <tr><td class="ft-id">002</td><td class="ft-mode">Exposure Drift</td><td class="ft-desc">Correlated pairs stacked without aggregate cap enforcement.</td><td class="ft-sev"><span class="sev-bar" style="width:85%"></span></td></tr>
-        <tr><td class="ft-id">003</td><td class="ft-mode">Revenge Exec</td><td class="ft-desc">Emotional recovery trade doubles the drawdown.</td><td class="ft-sev"><span class="sev-bar" style="width:95%"></span></td></tr>
-        <tr><td class="ft-id">004</td><td class="ft-mode">Floor Breach</td><td class="ft-desc">Prop firm daily limit exceeded. MT5 doesn't enforce it.</td><td class="ft-sev"><span class="sev-bar" style="width:100%"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="split-panel">
-    <div class="response-card">
-      <div class="rc-header">
-        <span class="rc-title">Shield Response</span>
-        <span class="rc-live">Enforcing</span>
-      </div>
-      <div class="rc-body">
-        <h3 class="rc-hed">Enforce the floor.<br><em>At the terminal.</em></h3>
-        <p class="rc-text">Shield sits on your MT5 terminal as a compiled Expert Advisor. When a threshold is hit, trading stops. No confirmation dialog. No manual bypass. No override.</p>
-        <div class="spec-grid">
-          <div class="spec-cell"><div class="spec-k">Daily Floor</div><div class="spec-v">Hardcoded</div></div>
-          <div class="spec-cell"><div class="spec-k">Exposure Cap</div><div class="spec-v">Per-Session</div></div>
-          <div class="spec-cell"><div class="spec-k">Session Close</div><div class="spec-v">21:55 UTC</div></div>
-          <div class="spec-cell"><div class="spec-k">Override</div><div class="spec-v red">Impossible</div></div>
-        </div>
-        <a href="https://paystack.com/buy/shield-brockway" class="btn-main" style="width:100%;justify-content:center;">Deploy Shield &rarr;</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ARCHITECTURE -->
-<div class="divider"></div>
-<section class="arch rv" id="architecture">
-  <div class="arch-top">
-    <div class="sp-tag blue">Architecture</div>
-    <h2 class="sp-headline" style="font-size:clamp(28px,4vw,48px);">Seven layers. <em class="blue">Zero gaps.</em></h2>
-    <p class="sp-body" style="max-width:600px;">Defence-in-depth. Each layer enforces independently. Seven independent governors, any one of which stops a breach.</p>
-  </div>
-  <table class="layer-table">
-    <thead><tr><th>Layer</th><th>Component</th><th>Description</th><th>Status</th></tr></thead>
-    <tbody>
-      <tr><td class="lt-num">01</td><td class="lt-name">Daily Floor</td><td class="lt-desc">Hardcoded max daily loss. Equity below threshold closes all positions and blocks new orders.</td><td class="lt-status green">ENFORCED</td></tr>
-      <tr><td class="lt-num">02</td><td class="lt-name">Exposure Governor</td><td class="lt-desc">Aggregate lot exposure capped across all open positions. Prevents concentration and correlated pair stacking.</td><td class="lt-status green">ENFORCED</td></tr>
-      <tr><td class="lt-num">03</td><td class="lt-name">Session Sweep</td><td class="lt-desc">All open positions swept at 21:55 UTC. No overnight holds. No weekend gap exposure. Non-negotiable.</td><td class="lt-status amber">21:55 UTC</td></tr>
-      <tr><td class="lt-num">04</td><td class="lt-name">Heartbeat Monitor</td><td class="lt-desc">Continuous health telemetry to web dashboard. Four-state arc: nominal, caution, critical, halted.</td><td class="lt-status blue">STREAMING</td></tr>
-      <tr><td class="lt-num">05</td><td class="lt-name">License Gate</td><td class="lt-desc">Cryptographic license validation on every startup. No valid key, no execution. Account-ID locked.</td><td class="lt-status green">LOCKED</td></tr>
-      <tr><td class="lt-num">06</td><td class="lt-name">News Sentinel</td><td class="lt-desc">Scans MT5 economic calendar every 60 seconds. High-impact events block new entries within a 30-minute window. CHF and JPY central bank events trigger a 4-hour flatten — all crosses close immediately.</td><td class="lt-status amber">±30 MIN</td></tr>
-      <tr><td class="lt-num">07</td><td class="lt-name">Velocity Halt</td><td class="lt-desc">Monitors equity drop rate over a rolling 5-minute window. Rapid drawdown beyond the profile threshold blocks all new entries for 30 minutes. Flash crash protection at the terminal level.</td><td class="lt-status amber">TOGGLEABLE</td></tr>
-    </tbody>
-  </table>
-</section>
-
-
-<!-- AUTHORITY QUOTES -->
-<section class="quotes rv" style="padding:100px 0;">
-  <div style="max-width:1400px;margin:0 auto;padding:0 48px;">
-    <div class="sp-tag blue" style="margin-bottom:40px;">The Doctrine</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
-      <div style="background:var(--surface);padding:40px 36px;">
-        <div style="font-family:var(--serif);font-size:22px;color:var(--white);line-height:1.4;margin-bottom:20px;font-style:italic;">&ldquo;The most important rule of trading is to play great defense, not great offense.&rdquo;</div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:1px;background:var(--blue);"></div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:2px;font-weight:600;">PAUL TUDOR JONES</div><div style="font-size:9px;color:var(--muted);margin-top:2px;">Founder, Tudor Investment Corp</div></div>
-        </div>
-      </div>
-      <div style="background:var(--surface);padding:40px 36px;">
-        <div style="font-family:var(--serif);font-size:22px;color:var(--white);line-height:1.4;margin-bottom:20px;font-style:italic;">&ldquo;The elements of good trading are: cutting losses, cutting losses, and cutting losses.&rdquo;</div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:1px;background:var(--blue);"></div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:2px;font-weight:600;">ED SEYKOTA</div><div style="font-size:9px;color:var(--muted);margin-top:2px;">Pioneer of systematic trading</div></div>
-        </div>
-      </div>
-      <div style="background:var(--surface);padding:40px 36px;">
-        <div style="font-family:var(--serif);font-size:22px;color:var(--white);line-height:1.4;margin-bottom:20px;font-style:italic;">&ldquo;Rule No.1: Never lose money. Rule No.2: Never forget Rule No.1.&rdquo;</div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:1px;background:var(--blue);"></div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:2px;font-weight:600;">WARREN BUFFETT</div><div style="font-size:9px;color:var(--muted);margin-top:2px;">Chairman, Berkshire Hathaway</div></div>
-        </div>
-      </div>
-      <div style="background:var(--surface);padding:40px 36px;">
-        <div style="font-family:var(--serif);font-size:22px;color:var(--white);line-height:1.4;margin-bottom:20px;font-style:italic;">&ldquo;It&#39;s not whether you&#39;re right or wrong, but how much you make when you&#39;re right and how much you lose when you&#39;re wrong.&rdquo;</div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:1px;background:var(--blue);"></div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:2px;font-weight:600;">STANLEY DRUCKENMILLER</div><div style="font-size:9px;color:var(--muted);margin-top:2px;">Former Chairman, Duquesne Capital</div></div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:32px;font-family:var(--mono);font-size:11px;color:var(--sub);letter-spacing:1px;">Shield doesn&#39;t improve your strategy. It enforces the discipline these legends built their careers on.</div>
-  </div>
-</section>
-<div class="divider"></div>
-
-<!-- PROFILES -->
-<section class="profiles rv" id="profiles">
-  <div class="profiles-top">
-    <div class="sp-tag green">Profiles</div>
-    <h2 class="sp-headline" style="font-size:clamp(28px,4vw,48px);">One profile. <em class="green">One mandate.</em></h2>
-  </div>
-  <div style="max-width:640px;">
-      <div class="p-card">
-      <div class="pc-header inst"><span class="pc-name">Institutional</span><span class="pc-tier">Profile 01</span></div>
-      <div class="pc-body">
-        <div class="pc-tagline">For prop firm challenges and funded accounts</div>
-        <div class="pc-for">FTMO &middot; FundedNext &middot; Seacrest &middot; MyFundedFX &middot; All prop firms</div>
-        <table class="pc-table">
-          <tr><td>Daily Floor</td><td>−1.00%</td></tr>
-          <tr><td>Heat Cap</td><td>2.5%</td></tr>
-          <tr><td>Velocity Halt</td><td>0.5% / 5 min</td></tr>
-          <tr><td>Session Sweep</td><td>21:55 UTC — No Override</td></tr>
-          <tr><td>Override</td><td>None</td></tr>
-        </table>
-        <div class="pc-toggles-label">Enforcement Layer</div>
-        <div class="pc-toggle"><span class="pct-name">Ratchet Protection<small>Automatic gain lock-in tiers</small></span><span class="pct-state on">LOCKED</span></div>
-        <div class="pc-toggle"><span class="pct-name">Trail Floor<small>Dynamic floor tracks HWM</small></span><span class="pct-state on">LOCKED</span></div>
-        <div class="pc-toggle"><span class="pct-name">Velocity Halt<small>Flash crash protection</small></span><span class="pct-state on">LOCKED</span></div>
-        <div class="pc-toggle"><span class="pct-name">Web Dashboard<small>Live telemetry to control room</small></span><span class="pct-state on">ON</span></div>
-        <div class="pc-toggle"><span class="pct-name">Telegram Alerts<small>Push notifications on triggers</small></span><span class="pct-state user">USER</span></div>
-        <div class="pc-price"><span class="pc-price-val">$99</span><span class="pc-price-per">/ month</span></div><div style="font-size:11px;color:var(--sub);margin-top:8px;line-height:1.5;">Less than 1% of a $10k funded account.<br>Less than one bad decision.</div>
-        <a href="https://paystack.com/buy/shield-brockway" class="pc-cta">Deploy Institutional</a>
-      </div>
-    </div>
-  </div></div>
-</section>
-
-<!-- DEPLOY -->
-<div class="divider"></div>
-<section class="deploy rv" id="deploy">
-  <div class="deploy-panel left">
-    <div class="sp-tag blue">Deployment</div>
-    <h2 class="sp-headline" style="font-size:clamp(24px,3vw,36px);">Live in four steps.<br><em class="blue">No code required.</em></h2>
-    <p class="sp-body">Shield is a compiled MQL5 Expert Advisor. Receive the <code style="font-family:var(--mono);font-size:11px;background:var(--blue-05);color:var(--blue);padding:1px 5px;border:1px solid var(--blue-10);">.ex5</code> file, drop it in MT5, enter your key.</p>
-    <div class="steps">
-      <div class="step"><div class="step-n"></div><div class="step-inner"><div class="step-title">Subscribe</div><div class="step-desc">Pay $99/month. License key generated and emailed in 60 seconds.</div></div></div>
-      <div class="step"><div class="step-n"></div><div class="step-inner"><div class="step-title">Install EA</div><div class="step-desc">Drop <code>.ex5</code> into MT5 <code>Experts</code> folder. Restart terminal.</div></div></div>
-      <div class="step"><div class="step-n"></div><div class="step-inner"><div class="step-title">Configure</div><div class="step-desc">Attach to chart. Enter license key. Shield auto-configures for your prop firm. Daily floor, exposure cap, and session sweep activate immediately.</div></div></div>
-      <div class="step"><div class="step-n"></div><div class="step-inner"><div class="step-title">Enforced</div><div class="step-desc">Floor hardcoded. Session bounded. Exposure capped. Trade normally — Shield handles the rest.</div></div></div>
-    </div>
-  </div>
-  <div class="deploy-panel">
-    <div class="sp-tag green">Telemetry</div>
-    <h2 class="sp-headline" style="font-size:clamp(24px,3vw,36px);">Real-time <em class="green">alerts.</em></h2>
-    <p class="sp-body">Every enforcement event, threshold breach, and session sweep — logged, timestamped, visible from any device.</p>
-    <div>
-      <div class="af-item g"><div class="af-bar"></div><div><div class="af-name">Floor Enforced</div><div class="af-text">Daily loss threshold reached. All positions closed. Orders blocked until next session.</div></div></div>
-      <div class="af-item a"><div class="af-bar"></div><div><div class="af-name">Exposure Warning</div><div class="af-text">Aggregate exposure at 80% of cap. Next position evaluated against remaining headroom.</div></div></div>
-      <div class="af-item r"><div class="af-bar"></div><div><div class="af-name">Session Sweep</div><div class="af-text">21:55 UTC. All open positions closed. No overnight exposure. Session complete.</div></div></div>
-      <div class="af-item c"><div class="af-bar"></div><div><div class="af-name">Heartbeat</div><div class="af-text">Shield active. Monitoring all execution events. Four-state health: nominal.</div></div></div>
-    </div>
-    <div class="deploy-note"><strong>Note:</strong> All telemetry pushed via API to Brockway Risk Terminal. No MetaQuotes VPS required. Dashboard accessible from any browser.</div>
-        
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="final-cta rv">
-  <div class="fc-inner">
-    <div class="fc-tag">Risk Infrastructure</div>
-    <h2 class="fc-hed">Stop <span class="serif">overriding</span><br>your own rules.</h2>
-    <p class="fc-sub">Shield doesn't trade for you. It stops you when you shouldn't be trading. Install. Activate. Trade with enforced risk.</p>
-    <a href="https://paystack.com/buy/shield-brockway" class="fc-btn">Deploy Shield &rarr;</a>
-    <div class="fc-proof">Systems operational &mdash; V2.0 Stable</div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-left">&copy; 2026 Brockway Trading & Technical Analysis Ltd. .</div>
-  <div class="footer-right">
-    <a href="https://paystack.com/buy/shield-brockway" class="footer-link">Documentation</a>
-    <a href="https://paystack.com/buy/shield-brockway" class="footer-link">Terms</a>
-    <a href="https://paystack.com/buy/shield-brockway" class="footer-link">Contact</a>
-  </div>
-</footer>
-
+</div>
 <script>
-// Scroll reveal
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-}, { threshold: 0.08 });
-document.querySelectorAll('.rv').forEach(el => obs.observe(el));
-</script>
+const API='https://shield-api-production-8317.up.railway.app/api/state';
+let K='',ac=[],ai=0,po=null,ev=[],pd=null,lt=0,la=0,ll=0;
+const $=id=>document.getElementById(id);
+const fm=(n,d=2)=>n==null?'\u2014':Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v));
+const gk=()=>{try{return sessionStorage.getItem('sk')||''}catch(e){return''}};
+const sk=k=>{try{sessionStorage.setItem('sk',k)}catch(e){}};
+const dk=()=>{try{sessionStorage.removeItem('sk')}catch(e){}};
 
+async function dl(){
+  if(Date.now()<ll){$('ke').textContent='Wait...';return}
+  const k=$('ki').value.trim();if(!k){$('ke').textContent='Key required';return}
+  $('kb').disabled=true;$('kb').textContent='VERIFYING...';$('ke').textContent='';
+  try{const r=await fetch(API+'?key='+encodeURIComponent(k));
+    if(r.ok){K=k;sk(k);la=0;let d=[];try{d=await r.json()}catch(e){d=[]}ac=Array.isArray(d)?d:(d&&!d.error)?[d]:[];bt()}
+    else af()
+  }catch(e){if(k.length>=8){K=k;sk(k);ac=[];bt()}else af()}
+}
+function af(){la++;ll=Date.now()+Math.min(Math.pow(2,la)*1000,30000);$('kb').disabled=false;$('kb').textContent='INITIALIZE';$('ke').textContent='Access denied'}
+function so(){dk();K='';ac=[];ev=[];pd=null;if(po){clearInterval(po);po=null}$('da').style.display='none';$('eb').style.display='none';$('lg').style.display='flex';$('ki').value='';$('ke').textContent=''}
+async function fd(){const r=await fetch(API+'?key='+encodeURIComponent(K));if(!r.ok)throw new Error();const d=await r.json();return Array.isArray(d)?d:(d&&!d.error)?[d]:[]}
+function bt(){$('lg').style.display='none';$('ld').style.display='none';$('da').style.display='flex';
+  if(ac.length>0){lt=Date.now();ra()}else $('pt').innerHTML='<div class="ne">NO ACTIVE ACCOUNTS<br>ATTACH EA TO BEGIN</div>';
+  if(!po)po=setInterval(async()=>{try{const d=await fd();ac=d;lt=Date.now();$('eb').style.display='none';if(ac.length>0)ra();else $('pt').innerHTML='<div class="ne">NO ACTIVE ACCOUNTS</div>'}catch(e){sh('dd');if(Date.now()-lt>30000)$('eb').style.display='block'}},5000)}
+
+function sh(s,a){$('hd').className='hbd '+s;$('ht').className='hbt '+s;const l={lv:'LIVE',dl:'LAG',st:'STALE',dd:'--'};$('ht').textContent=(a!=null&&s!=='dd')?a+'s':l[s]||s}
+function ch(d){if(!d||!d.timestamp){sh('dd');return 999}try{const n=d.timestamp.replace(/(\d{4})\.(\d{2})\.(\d{2})/,'$1-$2-$3').replace(' ','T')+'Z';const p=new Date(n);if(isNaN(p.getTime())){sh('dd');return 999}const a=(Date.now()-p.getTime())/1000;if(a<0||a<=15)sh('lv',Math.max(0,Math.round(a)));else if(a<=30)sh('dl',Math.round(a));else if(a<=120)sh('st',Math.round(a));else sh('dd');return Math.round(a)}catch(e){sh('dd');return 999}}
+
+const TM={'SOD_FLOOR':{t:'Floor Hit',d:'SOD floor hit',c:'d'},'DELTA_SOD_FLOOR':{t:'SOD Floor',d:'-75% day killed',c:'d'},'DELTA_RATCHET_FLOOR':{t:'Ratchet',d:'Multi-session reset',c:'p'},'RATCHET_FLOOR':{t:'Ratchet',d:'Gains locked',c:'p'},'THR_SOD_FLOOR':{t:'Floor',d:'SOD hit',c:'d'},'THR_CAT_SHIELD':{t:'Cat Shield',d:'Catastrophe',c:'d'},'SESSION_END':{t:'Session End',d:'Swept 21:55',c:'i'},'NEWS_HALT':{t:'News Halt',d:'Blocked',c:'w'},'VELOCITY_HALT':{t:'Velocity',d:'Flash halt',c:'d'}};
+
+function pe(trig,ex,ty){const d=TM[trig];ev.unshift({t:new Date().toLocaleTimeString(),n:d?d.t:(trig||'System'),de:d?d.d:(ex||''),c:d?d.c:(ty||'i')});if(ev.length>20)ev.pop();rf()}
+function rf(){const f=$('fe');$('ec').textContent=ev.length;if(!ev.length){f.innerHTML='<div style="text-align:center;color:var(--dm);font-size:9px;letter-spacing:2px;padding:16px 0">MONITORING...</div>';return}f.innerHTML=ev.map(e=>'<div class="ev '+e.c+'"><div class="evt">'+e.t+'</div><div class="evn">'+e.n+'</div><div class="evd">'+e.de+'</div></div>').join('')}
+function rt(){const c=$('pt');c.innerHTML='';ac.forEach((a,i)=>{const b=document.createElement('button');b.className='pb'+(i===ai?' on':'');b.textContent=(a.profile||'ACC')+(a.account_id?' \u00b7 '+a.account_id:'');b.onclick=()=>{ai=i;rt();rd(ac[i])};c.appendChild(b)})}
+function ra(){if(!ac.length)return;rt();rd(ac[ai]||ac[0])}
+function ss(d,v,bad,bt,ot){if(bad){d.className='sd bd';v.className='sv bd';v.textContent=bt}else{d.className='sd ok';v.className='sv ok';v.textContent=ot}}
+
+function rd(d){
+  if(!d)return;
+  var latency=ch(d);
+  var bal=Number(d.balance||0),eq=Number(d.equity||0),pnl=eq-bal;
+  var pos=Number(d.positions||0),sod=Number(d.sod||bal);
+  var hwm=d.hwm_pct!=null?Number(d.hwm_pct):null;
+  var floor=d.floor_pct!=null?Number(d.floor_pct):null;
+  var pp=d.pnl_pct!=null?Number(d.pnl_pct):(sod>0?(eq-sod)/sod*100:0);
+  var w=Number(d.wins_today||0),l=Number(d.losses_today||0);
+  var vc=Number(d.vel_count||0),sc=Number(d.session_count||1);
+  var st=d.stopped||false;
+
+  // EQUITY
+  $('eq').textContent='$'+fm(eq);$('bl').textContent='$'+fm(bal);
+  var pe=$('fl');pe.textContent=(pnl>=0?'+$':'-$')+fm(Math.abs(pnl));pe.className='v '+(pnl>=0?'p':'n');
+  $('ai').textContent=d.account_id?'#'+d.account_id:'\u2014';
+  $('ts').textContent=d.timestamp||'';$('df').textContent=d.timestamp?'Last: '+d.timestamp:'Brockway Trading & Technical Analysis Limited';
+
+  // RISK TELEMETRY
+  // DER: positions * estimated risk per trade / equity
+  var riskPer=d.profile==='INSTITUTIONAL'?0.5:35;
+  var der=pos*riskPer;
+  $('der').textContent=der.toFixed(1)+'%';$('der').className='v sm '+(der>80?'n':der>40?'a':'b');
+
+  // OER: Open Exposure Risk = total floating as % of SOD
+  var oer=sod>0?Math.abs(pnl)/sod*100:0;
+  $('oer').textContent=oer.toFixed(2)+'%';$('oer').className='v sm '+(oer>50?'n':oer>20?'a':'');
+
+  // MDD: distance from HWM to current
+  var mdd=hwm!=null?(hwm-pp).toFixed(2)+'%':'\u2014';
+  $('mdd').textContent=mdd;
+
+  // HWM, Floor, Distance
+  $('hwm').textContent=hwm!=null?'+'+hwm.toFixed(2)+'%':'\u2014';$('hwm').className='v sm '+(hwm>0?'p':'');
+  $('flr').textContent=floor!=null?floor.toFixed(2)+'%':'\u2014';$('flr').className='v sm n';
+  if(floor!=null){var dist=pp-floor;$('dtf').textContent=dist.toFixed(2)+'%';$('dtf').className='v sm '+(dist<5?'n':dist<15?'a':'p');
+    var range=Math.abs(floor);var used=range>0?cl((range-dist)/range*100,0,100):0;$('dbv').textContent=dist.toFixed(1)+'% left';$('dbf').style.width=used+'%';$('dbf').style.background=used>80?'var(--rd)':used>50?'var(--am)':'var(--gn)'}
+  else{$('dtf').textContent='\u2014';$('dbv').textContent='\u2014';$('dbf').style.width='0%'}
+
+  // PERFORMANCE
+  $('wn').textContent=w;$('ls').textContent=l;
+  var tot=w+l;$('wr').textContent=tot>0?Math.round(w/tot*100)+'%':'\u2014';
+  $('pf').textContent=tot>0&&l>0?(w/l).toFixed(2)+'x':(w>0?'\u221E':'\u2014');
+  $('sc').textContent='#'+sc;
+
+  // SYSTEM
+  ss($('s1d'),$('s1v'),d.news_halt,'HALTED','CLEAR');
+  ss($('s2d'),$('s2v'),vc>0,'HALT x'+vc,'SAFE');
+  ss($('s3d'),$('s3v'),st,'HIT','ARMED');
+  // Latency
+  if(latency<=15){$('s4d').className='sd ok';$('s4v').className='sv ok';$('s4v').textContent=latency+'s'}
+  else if(latency<=60){$('s4d').className='sd ok';$('s4v').className='sv ok';$('s4v').textContent=latency+'s'}
+  else{$('s4d').className='sd bd';$('s4v').className='sv bd';$('s4v').textContent=latency>900?'OFFLINE':latency+'s'}
+
+  // EVENTS
+  if(!pd)pe(null,'System online','i');
+  if(pd&&d.last_trigger!==pd.last_trigger&&d.last_trigger&&d.last_trigger!=='None')pe(d.last_trigger);
+  if(pd&&d.news_halt&&!pd.news_halt)pe('NEWS_HALT');
+  pd=Object.assign({},d);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  $('ki').addEventListener('keydown',function(e){if(e.key==='Enter')dl()});
+  $('kb').addEventListener('click',dl);
+  var s=gk();
+  if(s){K=s;var ct=new AbortController();var tm=setTimeout(function(){ct.abort()},5000);
+    fetch(API+'?key='+encodeURIComponent(s),{signal:ct.signal}).then(function(r){clearTimeout(tm);if(r.ok)return r.json();throw new Error()}).then(function(d){ac=Array.isArray(d)?d:(d&&!d.error)?[d]:[];bt()}).catch(function(){clearTimeout(tm);ac=[];bt()})}
+  else{$('ld').style.display='none';$('lg').style.display='flex'}
+});
+</script>
 </body>
 </html>
