@@ -11,8 +11,23 @@
 *{margin:0;padding:0;box-sizing:border-box}html,body{background:var(--bg);color:var(--tx);font-family:var(--m);overflow-x:hidden}
 body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);background-size: 30px 30px;}
 
+/* LICENSE GATE STYLES */
+#lg{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px; background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);background-size: 30px 30px;}
+.lb{width:100%;max-width:400px;background:var(--sf);border:1px solid var(--bl);padding:40px 28px; box-shadow: 0 0 30px rgba(0,243,255,0.1);}
+.lh{display:flex;align-items:center;gap:12px;margin-bottom:36px}.li{width:12px;height:12px;background:var(--bl); box-shadow: 0 0 10px var(--bl);}.ln{font-family:var(--s);font-size:20px;font-weight:800;color:var(--wh);letter-spacing:4px; text-transform: uppercase;}
+.ll{font-size:9px;color:var(--bl);letter-spacing:4px;display:block;margin-bottom:10px; text-transform: uppercase;}
+.lp{width:100%;background:transparent;border:none;border-bottom:1px solid var(--bd);color:var(--wh);font-family:var(--m);font-size:18px;padding:12px 0;outline:none;letter-spacing:4px;caret-color:var(--bl); text-align: center;}.lp:focus{border-color:var(--bl)}
+.lb-btn{width:100%;margin-top:28px;padding:16px;background:transparent; border: 1px solid var(--bl); color:var(--bl);font-family:var(--m);font-weight:600;font-size:11px;letter-spacing:4px;cursor:pointer; text-transform: uppercase; transition: 0.3s;}.lb-btn:hover{background:var(--bl); color: #000; box-shadow: 0 0 15px var(--bl);}
+.le{margin-top:15px;font-size:10px;color:var(--rd);text-align:center;min-height:14px; letter-spacing: 2px;}
+
+/* DASHBOARD STYLES */
+#da{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:2}
 .tb{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--bd);background:rgba(5,6,7,.95);position:sticky;top:0;z-index:50}
 .tbl{display:flex;align-items:center;gap:10px}.tbi{width:8px;height:8px;background:var(--bl);box-shadow:0 0 10px rgba(0,243,255,.4)}.tbn{font-family:var(--s);font-size:16px;font-weight:800;color:var(--wh);letter-spacing:4px; text-transform: uppercase;}
+.dc{background:none;border:1px solid rgba(255,59,59,.3);color:rgba(255,59,59,.8);font-family:var(--m);font-size:9px;letter-spacing:2px;padding:6px 12px;cursor:pointer; transition: 0.3s;}.dc:hover{background: rgba(255,59,59,.1);}
+
+/* SWITCHBOARD (GOD MODE) */
+.pt{display:none; overflow-x:auto;border-bottom:1px solid var(--bd);background:var(--sf); padding: 0 10px;}.pt::-webkit-scrollbar{display:none}.pb{flex-shrink:0;padding:15px 20px;font-size:10px;font-weight: 600; letter-spacing:3px;color:var(--sb);border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer; transition: 0.2s;}.pb.on{color:var(--bl);border-bottom-color:var(--bl); text-shadow: 0 0 10px rgba(0,243,255,0.3);}
 
 .mn{padding:20px;display:flex;flex-direction:column;gap:15px;max-width:1000px;width:100%;margin:0 auto}
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px}.stt{font-size:9px;font-weight:600;color:var(--mt);letter-spacing:4px; text-transform: uppercase;}
@@ -22,7 +37,6 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
 .gc{background:var(--sf);padding:18px 20px; display:flex; flex-direction:column; justify-content:center;}.gc label{display:block;font-size:8px;color:var(--mt);letter-spacing:2px;margin-bottom:8px; text-transform: uppercase;}.gc .v{font-family:var(--s);font-size:24px;font-weight:800;color:var(--wh);letter-spacing:-.5px}
 .gc .v.sm{font-size:16px;font-family:var(--m); font-weight: 600;}.gc .v.xs{font-size:12px;font-family:var(--m)}.gc .v.p{color:var(--gn)}.gc .v.n{color:var(--rd)}.gc .v.b{color:var(--bl)}.gc .v.a{color:var(--am)}
 
-/* VAULT STYLES */
 .arc{width:12px;height:12px;border-radius:50%;border:2px solid var(--bl);box-shadow:0 0 10px var(--bl),inset 0 0 5px var(--bl);animation:pulse-arc 2s infinite alternate;}
 @keyframes pulse-arc{0%{box-shadow:0 0 2px var(--bl),inset 0 0 2px var(--bl);}100%{box-shadow:0 0 15px var(--bl),inset 0 0 10px var(--bl);}}
 .vk{background:#000;border:1px dashed var(--sb);color:var(--sb);text-align:center;padding:16px;font-family:var(--m);font-size:16px;letter-spacing:6px;cursor:pointer;user-select:none;transition:all 0.2s ease;}
@@ -30,10 +44,8 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
 .dl-btn{display:block;width:100%;text-align:center;background:transparent;border:1px solid var(--bl);color:var(--bl);padding:14px;font-size:10px;font-weight:600;letter-spacing:3px;text-decoration:none;transition:0.3s;margin-top:15px; text-transform: uppercase;}
 .dl-btn:hover{background:var(--bl);color:#000;box-shadow:0 0 15px rgba(0,243,255,0.4);}
 
-/* PROGRESS BARS */
 .bl{display:flex;justify-content:space-between;font-size:8px;color:var(--mt);margin-bottom:6px;letter-spacing:2px; text-transform: uppercase;}.bt{height:4px;background:rgba(255,255,255,.05);overflow:hidden;border-radius:2px}.bf{height:100%;border-radius:2px;transition:width 1s cubic-bezier(0.4, 0, 0.2, 1), background .5s}
 
-/* STATUS DOTS */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd)}.sb{background:var(--sf);padding:14px 20px;display:flex;align-items:center;gap:12px}
 .sd{width:6px;height:6px;border-radius:50%;flex-shrink:0}.sd.ok{background:var(--bl);box-shadow:0 0 6px var(--bl)}.sd.bd{background:var(--rd);box-shadow:0 0 6px var(--rd)}.sd.wn{background:var(--am);box-shadow:0 0 6px var(--am)}
 .sl{font-size:8px;color:var(--mt);letter-spacing:2px;display:block;margin-bottom:4px; text-transform: uppercase;}.sv{font-size:11px;font-weight:600;letter-spacing:2px}.sv.ok{color:var(--bl)}.sv.bd{color:var(--rd)}.sv.wn{color:var(--am)}
@@ -45,14 +57,28 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
 </head>
 <body>
 
+<div id="lg">
+  <div class="lb">
+    <div class="lh"><div class="li"></div><div class="ln">SHIELD SYSTEM</div></div>
+    <label class="ll">Enter Authorization Key</label>
+    <input class="lp" id="ki" type="password" placeholder="••••••••••••" autocomplete="off">
+    <button class="lb-btn" id="kb" onclick="authenticate()">INITIALIZE TERMINAL</button>
+    <div class="le" id="ke"></div>
+  </div>
+</div>
+
 <div id="da">
   <div class="tb">
     <div class="tbl"><div class="tbi"></div><div class="tbn">Brockway Terminal</div></div>
-    <div style="font-size: 10px; color: var(--sb); letter-spacing: 2px;">V2.5 INFRASTRUCTURE</div>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div style="font-size: 10px; color: var(--sb); letter-spacing: 2px;" id="mode-badge">STANDARD MODE</div>
+        <button class="dc" onclick="logout()">DISCONNECT</button>
+    </div>
   </div>
   
-  <div class="mn">
+  <div class="pt" id="pt"></div>
 
+  <div class="mn">
     <div><div class="sh"><div class="stt">Authorization Vault</div><div class="arc"></div></div>
     <div class="cd"><div class="g2">
       <div class="gc" style="text-align: center;">
@@ -64,7 +90,7 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
             <div><label>MT5 Account ID</label><div class="v sm" id="mt5-id">LOADING...</div></div>
             <div style="text-align: right;"><label>T-Minus Exp</label><div class="v xs" id="t-minus" style="color: var(--sb);">LOADING...</div></div>
         </div>
-        <a href="#" class="dl-btn">DOWNLOAD .EX5 PAYLOAD</a>
+        <a href="#" class="dl-btn">DOWNLOAD V2.5 PAYLOAD</a>
       </div>
     </div></div></div>
 
@@ -80,16 +106,15 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
       <div class="g2">
         <div class="gc">
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px;">
-             <div><label>Prop Firm Daily Limit</label><div class="v sm" id="limit-daily">4.00%</div></div>
+             <div><label>Prop Firm Daily Limit</label><div class="v sm" id="limit-daily">0.00%</div></div>
              <div style="text-align: right;"><label>Current Daily DD</label><div class="v sm p" id="curr-daily">0.00%</div></div>
           </div>
           <div class="bl"><span>Freeze Proximity Buffer</span><span id="buf-daily">100% REMAINING</span></div>
           <div class="bt"><div class="bf" id="bar-daily" style="width:0%;background:var(--gn)"></div></div>
         </div>
-        
         <div class="gc">
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px;">
-             <div><label>Prop Firm Max Trailing</label><div class="v sm" id="limit-max">8.00%</div></div>
+             <div><label>Prop Firm Max Trailing</label><div class="v sm" id="limit-max">0.00%</div></div>
              <div style="text-align: right;"><label>Current Max DD</label><div class="v sm p" id="curr-max">0.00%</div></div>
           </div>
           <div class="bl"><span>Freeze Proximity Buffer</span><span id="buf-max">100% REMAINING</span></div>
@@ -106,48 +131,103 @@ body{background-image:linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1
       <div class="sb"><div class="sd ok" id="s4d"></div><div><span class="sl">Cloud Heartbeat</span><div class="sv ok" id="s4v">SYNCED</div></div></div>
     </div></div></div>
 
-    <div class="df">Brockway Trading &amp; Technical Analysis Limited // Institutional Systems</div>
+    <div class="df">Brockway Trading &amp; Technical Analysis Limited</div>
   </div>
 </div>
 
 <script>
-/* VAULT KEY SCRIPT */
-const realKey = "8492-AX71-99B2"; // To be mapped from Supabase
-function rk() { document.getElementById('vk').textContent = realKey; }
+const MASTER_KEY = "08023034259";
+let currentViewKey = "";
+
+// Mock Database of Active Traders
+const database = {
+    "CLIENT-KEY-1": {
+        key: "CLIENT-KEY-1", account_id: "64928110", days_remaining: "29D 14H", equity: 101250.00, balance: 100000.00, prop_daily_limit_pct: 4.0, prop_max_limit_pct: 8.0, current_daily_dd_pct: 1.2, current_max_dd_pct: 3.5, hard_freeze_engaged: false
+    },
+    "CLIENT-KEY-2": {
+        key: "CLIENT-KEY-2", account_id: "77892100", days_remaining: "12D 08H", equity: 48500.00, balance: 50000.00, prop_daily_limit_pct: 5.0, prop_max_limit_pct: 10.0, current_daily_dd_pct: 4.8, current_max_dd_pct: 9.5, hard_freeze_engaged: true
+    },
+    "CLIENT-KEY-3": {
+        key: "CLIENT-KEY-3", account_id: "99102833", days_remaining: "360D 22H", equity: 215000.00, balance: 200000.00, prop_daily_limit_pct: 4.0, prop_max_limit_pct: 8.0, current_daily_dd_pct: -0.5, current_max_dd_pct: 0.0, hard_freeze_engaged: false
+    }
+};
+
+// Vault Logic
+function rk() { document.getElementById('vk').textContent = currentViewKey; }
 function hk() { document.getElementById('vk').textContent = "****************"; }
 
-/* SUPABASE MOCK DATA ENGINE 
-  We will replace this object with a real fetch() request to your Supabase API later.
-*/
-const mockSupabaseData = {
-    account_id: "64928110",
-    days_remaining: "29D 14H",
-    equity: 101250.00,
-    balance: 100000.00,
+// Login Engine
+function authenticate() {
+    const input = document.getElementById('ki').value.trim();
+    const errorBox = document.getElementById('ke');
     
-    // Risk Settings
-    prop_daily_limit_pct: 4.0,
-    prop_max_limit_pct: 8.0,
+    if(!input) { errorBox.textContent = "KEY REQUIRED"; return; }
     
-    // Current State
-    current_daily_dd_pct: 1.2, // They are down 1.2% today
-    current_max_dd_pct: 3.5,   // They are down 3.5% from HWM
+    if(input === MASTER_KEY) {
+        // BOOT INTO GOD MODE
+        document.getElementById('lg').style.display = 'none';
+        document.getElementById('da').style.display = 'flex';
+        document.getElementById('mode-badge').textContent = "OVERRIDE: GOD MODE";
+        document.getElementById('mode-badge').style.color = "var(--rd)";
+        
+        buildSwitchboard();
+        loadTelemetry(Object.values(database)[0].key); // Load first client by default
+        
+    } else if (database[input]) {
+        // BOOT INTO STANDARD CLIENT MODE
+        document.getElementById('lg').style.display = 'none';
+        document.getElementById('da').style.display = 'flex';
+        document.getElementById('mode-badge').textContent = "STANDARD CLIENT";
+        document.getElementById('mode-badge').style.color = "var(--sb)";
+        document.getElementById('pt').style.display = 'none'; // Hide switchboard
+        
+        loadTelemetry(input);
+    } else {
+        errorBox.textContent = "INVALID CRYPTOGRAPHIC KEY";
+    }
+}
+
+function logout() {
+    document.getElementById('da').style.display = 'none';
+    document.getElementById('lg').style.display = 'flex';
+    document.getElementById('ki').value = '';
+    document.getElementById('ke').textContent = '';
+}
+
+// God Mode Switchboard Builder
+function buildSwitchboard() {
+    const pt = document.getElementById('pt');
+    pt.style.display = 'flex';
+    pt.innerHTML = ''; // clear old
     
-    // Infrastructure
-    guillotine_active: true,
-    hard_freeze_engaged: false
-};
+    Object.values(database).forEach(client => {
+        const btn = document.createElement('button');
+        btn.className = 'pb';
+        btn.textContent = "ACC " + client.account_id;
+        btn.onclick = () => {
+            // Remove active state from all, add to this one
+            document.querySelectorAll('.pb').forEach(b => b.classList.remove('on'));
+            btn.classList.add('on');
+            loadTelemetry(client.key);
+        };
+        pt.appendChild(btn);
+    });
+    // Set first active
+    pt.firstChild.classList.add('on');
+}
 
 function formatMoney(n) {
     return Number(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
-function updateTelemetry(data) {
-    // 1. Vault & Identity
+function loadTelemetry(key) {
+    const data = database[key];
+    currentViewKey = key;
+    hk(); // hide vault key
+    
     document.getElementById('mt5-id').textContent = data.account_id;
     document.getElementById('t-minus').textContent = data.days_remaining;
 
-    // 2. Equity
     document.getElementById('eq').textContent = '$' + formatMoney(data.equity);
     document.getElementById('bl').textContent = '$' + formatMoney(data.balance);
     
@@ -156,60 +236,50 @@ function updateTelemetry(data) {
     pnlEl.textContent = (pnl >= 0 ? '+$' : '-$') + formatMoney(Math.abs(pnl));
     pnlEl.className = 'v ' + (pnl >= 0 ? 'p' : 'n');
 
-    // 3. Daily Risk Math
+    // Daily Math
     document.getElementById('limit-daily').textContent = data.prop_daily_limit_pct.toFixed(2) + '%';
     let currDailyEl = document.getElementById('curr-daily');
     currDailyEl.textContent = data.current_daily_dd_pct.toFixed(2) + '%';
-    
-    let dailyUsedPct = (data.current_daily_dd_pct / data.prop_daily_limit_pct) * 100;
-    if(dailyUsedPct < 0) dailyUsedPct = 0;
+    let dailyUsedPct = Math.max(0, (data.current_daily_dd_pct / data.prop_daily_limit_pct) * 100);
     
     document.getElementById('buf-daily').textContent = (100 - dailyUsedPct).toFixed(1) + '% REMAINING';
     let barDaily = document.getElementById('bar-daily');
     barDaily.style.width = Math.min(dailyUsedPct, 100) + '%';
-    
-    // Color Logic for Daily
-    if(dailyUsedPct < 50) {
-        barDaily.style.background = 'var(--bl)'; currDailyEl.className = 'v sm b';
-    } else if (dailyUsedPct < 85) {
-        barDaily.style.background = 'var(--am)'; currDailyEl.className = 'v sm a';
-    } else {
-        barDaily.style.background = 'var(--rd)'; currDailyEl.className = 'v sm n';
-    }
+    if(dailyUsedPct < 50) { barDaily.style.background = 'var(--bl)'; currDailyEl.className = 'v sm b'; } 
+    else if (dailyUsedPct < 85) { barDaily.style.background = 'var(--am)'; currDailyEl.className = 'v sm a'; } 
+    else { barDaily.style.background = 'var(--rd)'; currDailyEl.className = 'v sm n'; }
 
-    // 4. Max Risk Math
+    // Max Math
     document.getElementById('limit-max').textContent = data.prop_max_limit_pct.toFixed(2) + '%';
     let currMaxEl = document.getElementById('curr-max');
     currMaxEl.textContent = data.current_max_dd_pct.toFixed(2) + '%';
-    
-    let maxUsedPct = (data.current_max_dd_pct / data.prop_max_limit_pct) * 100;
-    if(maxUsedPct < 0) maxUsedPct = 0;
+    let maxUsedPct = Math.max(0, (data.current_max_dd_pct / data.prop_max_limit_pct) * 100);
     
     document.getElementById('buf-max').textContent = (100 - maxUsedPct).toFixed(1) + '% REMAINING';
     let barMax = document.getElementById('bar-max');
     barMax.style.width = Math.min(maxUsedPct, 100) + '%';
-    
-    // Color Logic for Max
-    if(maxUsedPct < 50) {
-        barMax.style.background = 'var(--bl)'; currMaxEl.className = 'v sm b';
-    } else if (maxUsedPct < 85) {
-        barMax.style.background = 'var(--am)'; currMaxEl.className = 'v sm a';
-    } else {
-        barMax.style.background = 'var(--rd)'; currMaxEl.className = 'v sm n';
-    }
+    if(maxUsedPct < 50) { barMax.style.background = 'var(--bl)'; currMaxEl.className = 'v sm b'; } 
+    else if (maxUsedPct < 85) { barMax.style.background = 'var(--am)'; currMaxEl.className = 'v sm a'; } 
+    else { barMax.style.background = 'var(--rd)'; currMaxEl.className = 'v sm n'; }
 
-    // 5. System Health
+    // System Health
+    let freezeEl = document.getElementById('s2v');
+    let freezeDot = document.getElementById('s2d');
     if(data.hard_freeze_engaged) {
-        document.getElementById('s2d').className = 'sd bd';
-        document.getElementById('s2v').className = 'sv bd';
-        document.getElementById('s2v').textContent = 'LOCKED';
+        freezeDot.className = 'sd bd';
+        freezeEl.className = 'sv bd';
+        freezeEl.textContent = 'LOCKED';
+    } else {
+        freezeDot.className = 'sd ok';
+        freezeEl.className = 'sv ok';
+        freezeEl.textContent = 'SAFE';
     }
 }
 
-// Boot the dashboard with our mock data
-window.onload = () => {
-    updateTelemetry(mockSupabaseData);
-};
+// Handle Enter Key
+document.getElementById('ki').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') authenticate();
+});
 </script>
 </body>
 </html>
