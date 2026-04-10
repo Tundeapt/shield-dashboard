@@ -135,6 +135,7 @@ function ss(d,v,bad,bt,ot){if(bad){d.className='sd bd';v.className='sv bd';v.tex
 
 function rd(d){
   if(!d)return;
+  if(d.shield_state)Object.assign(d, d.shield_state);
   var latency=ch(d);
   var bal=Number(d.balance||0),eq=Number(d.equity||0),pnl=eq-bal;
   var pos=Number(d.positions||0),sod=Number(d.sod||bal);
